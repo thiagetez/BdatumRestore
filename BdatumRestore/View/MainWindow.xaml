@@ -2,10 +2,56 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BdatumRestore.ViewModel"
-        Title="MainWindow" Height="261" Width="476">
-    <Grid Height="222">
-        <!-- hieracical binding -->
-        <TreeView ItemsSource="{Binding Folders}" Margin="12,12,12,41" Name="TreeView1">
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        Title="MainWindow" Height="420" Width="762">
+    <Grid Height="322" Width="738">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="311*" />
+            <RowDefinition Height="11*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="21*" />
+            <ColumnDefinition Width="155*" />
+            <ColumnDefinition Width="159*" />
+            <ColumnDefinition Width="70*" />
+            <ColumnDefinition Width="161*" />
+            <ColumnDefinition Width="162*" />
+            <ColumnDefinition Width="10*" />
+        </Grid.ColumnDefinitions>
+        <TreeView ItemsSource="{Binding Folders}" Margin="0,12,0,30" Name="TreeView1" AllowDrop="False" HorizontalAlignment="Left" Width="313" Grid.Column="1" Grid.ColumnSpan="2">
+            <TreeView.Resources>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Name="img"  Width="20" Height="20" Stretch="Fill"
+                                    Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                    AncestorType={x:Type TreeViewItem}},
+                                    Path=Header,
+                                    Converter={x:Static local:ImageConverter.Instance}}"
+                                    />
+                                    <TextBlock Text="{Binding}" Margin="5,0" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TreeView.Resources>
+            <!--<TreeView.ItemTemplate>
+                <DataTemplate>
+                    <TreeViewItem Header="{Binding FolderName, UpdateSourceTrigger=PropertyChanged}" TreeViewItem.PreviewMouseLeftButtonDown="TreeView_PreviewMouseLeftButtonDown"/>
+                </DataTemplate>
+            </TreeView.ItemTemplate>-->
+
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Folders}" DataType="{x:Type local:IFolder}">
+                    <TreeViewItem Header="{Binding FolderName, UpdateSourceTrigger=PropertyChanged}" TreeViewItem.Expanded="TreeViewItem_Expanded"/>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
+        </TreeView>
+        <!--<TreeView ItemsSource="{Binding Folders}" Margin="243,10,10,41">
             <TreeView.Resources>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="HeaderTemplate">
@@ -26,12 +72,22 @@
                 </Style>
             </TreeView.Resources>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Folders}" DataType="{x:Type local:IFolder}">
-                    <TreeViewItem Header="{Binding FolderName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding FolderName}"/>
-                </HierarchicalDataTemplate>
+                <DataTemplate>
+                    <TreeViewItem Header="{Binding FileName}"/>
+                </DataTemplate>
             </TreeView.ItemTemplate>
-        </TreeView>
-        <Button Content="Restaurar" Height="23" HorizontalAlignment="Left" Margin="61,187,0,0" Name="button1" VerticalAlignment="Top" Width="75" Command="{Binding UpdateCommand}"/>
-        <Button Content="Navegar" Height="23" HorizontalAlignment="Left" Margin="269,187,0,0" Name="button2" VerticalAlignment="Top" Width="75" Command="{Binding UpdateCommand}" />
+        </TreeView>-->
+        <ListBox ItemsSource="{Binding Folders}" Margin="0,10,0,30" Grid.Column="4" Grid.ColumnSpan="2" SelectionMode="Multiple" Name="FileList">
+                <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding FileName}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <Button Content="Restaurar" Height="23" HorizontalAlignment="Left" Margin="123,287,0,0" Name="button1" VerticalAlignment="Top" Width="75" Command="{Binding DownloadCommand}" Grid.Column="4" Grid.ColumnSpan="2" />
+        <Button Content="Navegar" Height="23" HorizontalAlignment="Left" Margin="117,287,0,0" Name="button2" VerticalAlignment="Top" Width="75" Command="{Binding UpdateCommand}" Grid.Column="1" Grid.ColumnSpan="2" />
+        <TextBlock Height="35" HorizontalAlignment="Left" Margin="95,-29,0,0" Name="textBlock1" Text="Diretórios" VerticalAlignment="Top" Opacity="5" FontSize="24" Grid.Column="1" Grid.ColumnSpan="2" />
+        <TextBlock Height="35" HorizontalAlignment="Left" Margin="124,-29,0,0" Name="textBlock2" Text="Arquivos" VerticalAlignment="Top" Opacity="5" Grid.Column="4" FontSize="24" Grid.ColumnSpan="2" />
     </Grid>
 </Window>

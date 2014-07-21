@@ -21,12 +21,29 @@ namespace BdatumRestore.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ListFolder _Update { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             DataContext=new ListFolder(this);
         }
 
+        private void TreeView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount > 1)
+            {
+    
+                _Update = DataContext as ListFolder;
+                _Update.UpdateCommand.Execute(null);
+            }
+        }
+
+        private void TreeViewItem_Expanded(object sender, RoutedEventArgs e)
+        {
+                _Update = DataContext as ListFolder;
+                _Update.UpdateCommand.Execute(null);
+            
+        }
        
     }
 }

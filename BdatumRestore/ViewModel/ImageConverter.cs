@@ -22,7 +22,11 @@ namespace BdatumRestore.ViewModel
 
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                    if ((value as string).Contains(@"\"))
+                if (value == null)
+                    value = "{DisconnectedItem}";
+                if (value.ToString() != "{DisconnectedItem}")
+                {
+                    if ((value.ToString()).Contains(@"\"))
                     {
                         Uri uri = new Uri
                         ("pack://application:,,,/Resources/folder.png");
@@ -35,6 +39,8 @@ namespace BdatumRestore.ViewModel
                         BitmapImage source = new BitmapImage(uri);
                         return source;
                     }
+                }
+                return null;
               
             }
 

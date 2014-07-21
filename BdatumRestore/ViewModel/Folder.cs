@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace BdatumRestore.ViewModel
 {
@@ -12,16 +13,17 @@ namespace BdatumRestore.ViewModel
     {
         public Folder()
         {
-            m_folders = new List<IFolder>();
+            m_folders = new ObservableCollection<IFolder>();
         }
         public string FullPath { get; set; }
 
         public string FolderName { get; set; }
-
+        public string FileName { get; set; }
         public bool isFolder { get; set; }
 
-        private readonly List<IFolder> m_folders;
-        public List<IFolder> Folders
+        public ObservableCollection<IFolder> m_folders;
+
+        public ObservableCollection<IFolder> Folders
         {
             get { return m_folders; }
         }

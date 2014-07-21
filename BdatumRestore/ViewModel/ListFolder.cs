@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using BDatum.SDK;
 using System.Configuration;
 
 namespace BdatumRestore.ViewModel
 {
-    
+
+    using BDatum.SDK;
     using BDatum.SDK.REST;
     using System.IO;
     using System.Windows.Input;
     using BdatumRestore.Model;
-using BdatumRestore.View;
+    using BdatumRestore.View;
     using System.Windows.Controls;
+    using System.Collections.ObjectModel;
 
     //Classe que lista as pastas
     public class ListFolder:INotifyPropertyChanged
     {
         private static IConfiguration _configuration { get; set; }
+
+        private EnumDirectories _EnumDir { get; set; }
 
         public static string SelectedItemPath { get; set; }
         //public static string currentPath = String.Format("{0}{1}", Path.GetTempPath(), "UploadFileTest");
@@ -28,18 +31,19 @@ using BdatumRestore.View;
         public ListFolder(MainWindow MainWindow)
         {
             _MainWindow = MainWindow;
-            RestoreCommand = new UpdateCommandModel(this,SelectedItemPath);
+            DownloadCommand = new DownloadCommandModel(this,SelectedItemPath);
             UpdateCommand = new UpdateTreeViewCommandModel(this);
-            m_folders = new List<IFolder>();
+            _EnumDir=new EnumDirectories();
+            m_folders = new ObservableCollection<IFolder>();
             //TODO: listar pastas e arquivos em abas separadas
             AuthenticationMethod();
             InitTreeView();
         }
 
-             
-        private List<IFolder> m_folders;
 
-        public List<IFolder> Folders
+        private ObservableCollection<IFolder> m_folders;
+
+        public ObservableCollection<IFolder> Folders
         {
             get { return m_folders; }
             set
@@ -50,18 +54,29 @@ using BdatumRestore.View;
         }
         public static void AuthenticationMethod()
         {
-            IConnectionConfiguration _connection = new ConnectionConfiguration();
-            IAuthentication _authentication = new Authentication(
-                ConfigurationManager.AppSettings["bdatumNodeKey"],
-                ConfigurationManager.AppSettings["bdatumPartnerKey"]
-            );
+            try
+            {
+                IConnectionConfiguration _connection = new ConnectionConfiguration();
+                IAuthentication _authentication = new Authentication(
+                    ConfigurationManager.AppSettings["bdatumNodeKey"],
+                    ConfigurationManager.AppSettings["bdatumPartnerKey"]
+                );
 
-            if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["bdatumURI"]))
-                _connection.ServiceURL = ConfigurationManager.AppSettings["bdatumURI"];
+                if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["bdatumURI"]))
+                    _connection.ServiceURL = ConfigurationManager.AppSettings["bdatumURI"];
 
-            _configuration = new BDatum.SDK.REST.Configuration(_authentication, _connection);
+                _configuration = new BDatum.SDK.REST.Configuration(_authentication, _connection);
+            }
+            catch (Exception e)
+            {
+                throw new BDatumException(e.ToString());
+            }
         }
 
+        /// <summary>
+        /// Notifica uma mudança na propriedade para o evento
+        /// </summary>
+        /// <param name="property"></param>
         void NotifiyPropertyChanged(string property)
         {
             if (PropertyChanged != null)
@@ -71,15 +86,30 @@ using BdatumRestore.View;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand UpdateCommand { get; set; }
-        public ICommand RestoreCommand { get; set; }
+        public ICommand DownloadCommand { get; set; }
 
         internal void Download()
         {
-            if (_MainWindow.TreeView1.SelectedItem!=null)
+            if (_MainWindow.FileList.SelectedItems != null && _MainWindow.FileList.SelectedItems.Count != 0)
             {
-                IFolder item = _MainWindow.TreeView1.SelectedItem as IFolder;
-                Storage storage = new Storage(_configuration);
-                storage.Download(item.FullPath,Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+@"");
+               // List<IFolder> item = _MainWindow.FileList.SelectedItems as List<IFolder>;
+                foreach (IFolder item in _MainWindow.FileList.SelectedItems)
+                {
+                    Storage storage = new Storage(_configuration);
+                    string path=item.FullPath;
+                    storage.Download(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\DownloadDirTest");
+                }
+            }
+            else if (_MainWindow.TreeView1.SelectedItem != null)
+            {
+                IFolder selecteditem=(IFolder)_MainWindow.TreeView1.SelectedItem;
+                List<IFolder> Files = _EnumDir.EnumFolderAndSubFolders(selecteditem.FullPath, _configuration);
+             foreach (IFolder item in _MainWindow.FileList.SelectedItems)
+             {
+                 Storage storage = new Storage(_configuration);
+                 string path = item.FullPath;
+                 storage.Download(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\DownloadDirTest");
+             }
             }
         }
 
@@ -91,22 +121,23 @@ using BdatumRestore.View;
                 List<BDatumFiles> FileList = new List<BDatumFiles>();
                 Storage storage = new Storage(_configuration);
                 FileList = storage.EnumerateFilesAndFolders();
-
+                m_folders.Clear();
                 foreach (BDatumFiles file in FileList)
                 {
                     if (file.IsDirectory)
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2] + @"\", FullPath = file.FullName, isFolder = file.IsDirectory });
+                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory });
                     }
                     else
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory });
+                        Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory });
                     }
                 }
             
         }
+
 
         internal void UpdateTreeView()
         {
@@ -123,12 +154,12 @@ using BdatumRestore.View;
                     if (file.IsDirectory)
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2] + @"\", FullPath = file.FullName, isFolder = file.IsDirectory });
+                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory });
                     }
                     else
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory });
+                        Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory });
                     }
                 }
                 
