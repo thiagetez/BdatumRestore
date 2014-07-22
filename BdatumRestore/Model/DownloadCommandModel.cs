@@ -30,7 +30,7 @@ namespace BdatumRestore.Model
 
         public void Execute(object parameter)
         {
-            _ListFolder.Download();
+           _ListFolder.Download();
         }
     }
 }

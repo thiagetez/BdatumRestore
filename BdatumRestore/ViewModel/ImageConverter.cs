@@ -24,23 +24,19 @@ namespace BdatumRestore.ViewModel
             {
                 if (value == null)
                     value = "{DisconnectedItem}";
-                if (value.ToString() != "{DisconnectedItem}")
+                IFolder folder = value as IFolder;
+                if (folder.FolderName != null)
                 {
-                    if ((value.ToString()).Contains(@"\"))
+                    if (folder.FolderName.Contains(@"\"))
                     {
                         Uri uri = new Uri
                         ("pack://application:,,,/Resources/folder.png");
                         BitmapImage source = new BitmapImage(uri);
                         return source;
                     }
-                    else
-                    {
-                        Uri uri = new Uri("pack://application:,,,/Resources/File.png");
-                        BitmapImage source = new BitmapImage(uri);
-                        return source;
-                    }
                 }
                 return null;
+       
               
             }
 

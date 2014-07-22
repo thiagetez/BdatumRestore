@@ -24,6 +24,9 @@ namespace BdatumRestore.ViewModel
 
         private EnumDirectories _EnumDir { get; set; }
 
+        private int _FoldersCount { get; set; }
+
+        private int _ItensCount { get; set; }
         public static string SelectedItemPath { get; set; }
         //public static string currentPath = String.Format("{0}{1}", Path.GetTempPath(), "UploadFileTest");
         private static MainWindow _MainWindow { get; set; }
@@ -92,24 +95,24 @@ namespace BdatumRestore.ViewModel
         {
             if (_MainWindow.FileList.SelectedItems != null && _MainWindow.FileList.SelectedItems.Count != 0)
             {
-               // List<IFolder> item = _MainWindow.FileList.SelectedItems as List<IFolder>;
+                // List<IFolder> item = _MainWindow.FileList.SelectedItems as List<IFolder>;
                 foreach (IFolder item in _MainWindow.FileList.SelectedItems)
                 {
                     Storage storage = new Storage(_configuration);
-                    string path=item.FullPath;
+                    string path = item.FullPath;
                     storage.Download(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\DownloadDirTest");
                 }
             }
             else if (_MainWindow.TreeView1.SelectedItem != null)
             {
-                IFolder selecteditem=(IFolder)_MainWindow.TreeView1.SelectedItem;
+                IFolder selecteditem = (IFolder)_MainWindow.TreeView1.SelectedItem;
                 List<IFolder> Files = _EnumDir.EnumFolderAndSubFolders(selecteditem.FullPath, _configuration);
-             foreach (IFolder item in _MainWindow.FileList.SelectedItems)
-             {
-                 Storage storage = new Storage(_configuration);
-                 string path = item.FullPath;
-                 storage.Download(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\DownloadDirTest");
-             }
+                foreach (IFolder item in Files)
+                {
+                    Storage storage = new Storage(_configuration);
+                    string path = item.FullPath;
+                    storage.Download(path, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\DownloadDirTest");
+                }
             }
         }
 
@@ -127,43 +130,64 @@ namespace BdatumRestore.ViewModel
                     if (file.IsDirectory)
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory });
+                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2] + @"\", FullPath = file.FullName, isFolder = file.IsDirectory});
                     }
                     else
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory });
+                        Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory});
                     }
+                    
                 }
             
         }
 
 
-        internal void UpdateTreeView()
+        internal void UpdateTreeView(object fileItem)
         {
-            if (_MainWindow.TreeView1.SelectedItem != null)
-            {
-
-                IFolder item = _MainWindow.TreeView1.SelectedItem as IFolder;
+                IFolder item = fileItem as IFolder;
                 List<BDatumFiles> FileList = new List<BDatumFiles>();
                 Storage storage = new Storage(_configuration);
                 FileList = storage.EnumerateFilesAndFolders(item.FullPath);
-                m_folders.Clear();
+                 _FoldersCount = Folders.Count();
+                int index = Folders.IndexOf(item);
+                //m_folders.Clear();
+
+
+
+                if (_ItensCount != 0)
+                {
+                    int itensToRemove = _FoldersCount - _ItensCount;
+
+                    for (int i = _FoldersCount - _ItensCount; i < _FoldersCount; i++)
+                    {
+                        Folders.RemoveAt(itensToRemove);
+              
+                    }
+                    _ItensCount = 0;
+                }
+                    
+
+                
                 foreach (BDatumFiles file in FileList)
                 {
                     if (file.IsDirectory)
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory });
+                        //Folders[index].Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory,isChildren=true});
+                        item.Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2] + @"\", FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true });
+                        
                     }
                     else
                     {
+                        _ItensCount++;
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory });
+                        //Folders[index].Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory,isChildren=true });
+                        Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true });
                     }
                 }
                 
-            }
+            
          }
 
 

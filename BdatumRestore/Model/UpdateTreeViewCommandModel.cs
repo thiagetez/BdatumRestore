@@ -28,7 +28,7 @@ namespace BdatumRestore.ViewModel
 
         public void Execute(object parameter)
         {
-            _ListFolderInstance.UpdateTreeView();
+            _ListFolderInstance.UpdateTreeView(parameter);
         }
     }
 }

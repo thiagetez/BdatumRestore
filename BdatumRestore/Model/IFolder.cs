@@ -12,6 +12,8 @@ namespace BdatumRestore.ViewModel
         string FolderName { get; }
         string FileName { get; }
         bool isFolder { get; }
-        ObservableCollection<IFolder> Folders { get; } 
+        ObservableCollection<IFolder> Folders { get; }
+        bool isChildren { get; }
+
     }
 }

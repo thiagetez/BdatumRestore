@@ -27,5 +27,8 @@ namespace BdatumRestore.ViewModel
         {
             get { return m_folders; }
         }
+
+        public bool isChildren { get; set; }
+      
     }
 }
