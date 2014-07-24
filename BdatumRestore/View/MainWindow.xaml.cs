@@ -13,6 +13,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BdatumRestore.View;
 using BdatumRestore.ViewModel;
+using System.Windows.Forms;
+using BdatumRestore.Model;
+using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace BdatumRestore.View
 {
@@ -22,8 +26,11 @@ namespace BdatumRestore.View
     public partial class MainWindow : Window
     {
         private ListFolder _Update { get; set; }
+        public FolderBrowserDialog browseDialog { get; set; }
+        public System.Windows.Forms.IWin32Window win32Handle { get; set; }
         public MainWindow()
         {
+            browseDialog = new FolderBrowserDialog();
             InitializeComponent();
             DataContext=new ListFolder(this);
         }
@@ -43,6 +50,18 @@ namespace BdatumRestore.View
                 _Update = DataContext as ListFolder;
                 _Update.UpdateCommand.Execute(null);
             
+        }
+
+        public void ShowBrowseDialog()
+        {
+            
+                System.Windows.Application.Current.Dispatcher.Invoke(
+                         DispatcherPriority.Background,
+                         (Action)(() =>
+                         {
+                             win32Handle = new WindowWrapper(new WindowInteropHelper(this).Handle);
+                         }));
+            browseDialog.ShowDialog(win32Handle);
         }
 
        

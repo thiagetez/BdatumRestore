@@ -4,107 +4,51 @@
         xmlns:local="clr-namespace:BdatumRestore.ViewModel"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:vm="clr-namespace:BdatumRestore.ViewModel"
-        Title="MainWindow" Height="420" Width="762">
-
-    <Grid Height="322" Width="738">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="311*" />
-            <RowDefinition Height="11*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="21*" />
-            <ColumnDefinition Width="155*" />
-            <ColumnDefinition Width="159*" />
-            <ColumnDefinition Width="70*" />
-            <ColumnDefinition Width="161*" />
-            <ColumnDefinition Width="162*" />
-            <ColumnDefinition Width="10*" />
-        </Grid.ColumnDefinitions>
-        <TreeView ItemsSource="{Binding Folders}" Margin="0,12,0,30" Name="TreeView1" AllowDrop="False" HorizontalAlignment="Left" Width="313" Grid.Column="1" Grid.ColumnSpan="2">
+        Title="MainWindow" Height="618" Width="950" Background="#DDDDDDDD" Icon="/BdatumRestore;component/Images/favicon_bdatum.ico">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TreeView AllowDrop="False" Background="White" HorizontalAlignment="Left" ItemsSource="{Binding Folders}" Margin="148,170,0,149" Name="TreeView1" Width="313">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type vm:IFolder}" ItemsSource="{Binding Folders}">
+                    <Button Background="{x:Null}" BorderBrush="{x:Null}" ClickMode="Press"  Command="{Binding ElementName=button2, Path=Command}" CommandParameter="{Binding ElementName=ItemText, Path=ToolTip}" Focusable="False" Height="20" Name="ButtonItems" Padding="0" ToolTip="{Binding Path=FolderName, Mode=OneTime}">
+                        <StackPanel Margin="0" Orientation="Horizontal" VerticalAlignment="Stretch">
+                            <!--<CheckBox Focusable="False" VerticalAlignment="Center" Name="CheckBox" ToolTip="{Binding}" />-->
+                            <Image Source="{Binding Converter={x:Static vm:ImageConverter.Instance}, Mode=OneTime}" Stretch="Fill" />
+                            <TextBlock Margin="5,0,0,0" Name="ItemText" Text="{Binding FolderName, Mode=OneTime}" ToolTip="{Binding}" />
+                        </StackPanel>
+                    </Button>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
             <TreeView.Resources>
                 <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="HeaderTemplate">
+                    <Setter Property="HeaderedItemsControl.HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Name="img"  Width="20" Height="20" Stretch="Fill"
-                                    Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
-                                    AncestorType={x:Type TreeViewItem}},
-                                    Path=Header,
-                                    Converter={x:Static local:ImageConverter.Instance}}"
-                                    />
-                                    <TextBlock Text="{Binding}" Margin="5,0" />
+                                    <Image Height="20" Name="img" Source="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeViewItem}}, Path=Header, Converter={x:Static vm:ImageConverter.Instance}}" Stretch="Fill" Width="20" />
+                                    <TextBlock Margin="5,0" Text="{Binding}" />
                                 </StackPanel>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
                 </Style>
             </TreeView.Resources>
-
-
-            <!--<TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Folders}" DataType="{x:Type local:IFolder}">
-                    <TreeViewItem Header="{Binding FolderName, UpdateSourceTrigger=PropertyChanged}" TreeViewItem.Expanded="TreeViewItem_Expanded"/>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>-->
-            
-            <!--<TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Folders}" DataType="{x:Type local:IFolder}">
-                    <Button Content="{Binding FolderName}" Command="{Binding ElementName=button2, Path=Command}" />
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>-->
-
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Folders}" DataType="{x:Type local:IFolder}">
-               <Button 
-                  Name="ButtonItems"
-                  ToolTip="{Binding Path=FolderName, Mode=OneTime}"     
-                  Command="{Binding ElementName=button2, Path=Command}"
-                   CommandParameter="{Binding ElementName=ItemText, Path=ToolTip}"
-                    Background="{x:Null}" BorderBrush="{x:Null}" Padding="0" Height="20"
-        Focusable="False" ClickMode="Press">
-
-                    <!--Icon + Friendly Name horizontally stacked--> 
-                    <StackPanel Orientation="Horizontal" Margin="0" VerticalAlignment="Stretch" >
-                            <Image
-              Source="{Binding Converter={x:Static local:ImageConverter.Instance}, Mode=OneTime}"
-              Stretch="Fill"
-              />
-                            <TextBlock Margin="5,0,0,0" Text="{Binding FolderName, Mode=OneTime}" Name="ItemText" ToolTip="{Binding}"/>
-                    </StackPanel>
-                </Button>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
         </TreeView>
-
-        <ListBox ItemsSource="{Binding Folders}" Margin="45,10,25,30" Grid.Column="3" Grid.ColumnSpan="3" SelectionMode="Multiple" Name="FileList">
-                <ListBox.ItemTemplate>
+        <ListBox AllowDrop="False" Background="White" ItemsSource="{Binding Folders}" Margin="507,168,95,149" Name="FileList" SelectionMode="Multiple">
+            <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label Content="{Binding FileName}"/>
+                    <Label Content="{Binding FileName}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
-<!--<TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Folders}" DataType="{x:Type local:IFolder}">
-               <Button 
-                         ToolTip="{Binding Path=FolderName, Mode=OneTime}"     
-                   Command="{Binding Path= UpdateTreeView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                    Background="{x:Null}" BorderBrush="{x:Null}" Padding="0" Height="20"
-        Focusable="False" ClickMode="Press">
-
-                    Icon + Friendly Name horizontally stacked 
-                    <StackPanel Orientation="Horizontal" Margin="0" VerticalAlignment="Stretch" >
-                            <Image
-              Source="{Binding Converter={x:Static local:ImageConverter.Instance}, Mode=OneTime}"
-              Stretch="Fill"
-              />
-                            <TextBlock Margin="5,0,0,0" Text="{Binding FolderName, Mode=OneTime}"/>
-                    </StackPanel>
-                </Button>-->
-        <Button Content="Restaurar" Height="23" HorizontalAlignment="Left" Margin="143,287,0,0" Name="button1" VerticalAlignment="Top" Width="75" Command="{Binding DownloadCommand}" Grid.Column="2" Grid.ColumnSpan="2" />
-        <Button Content="Navegar" Name="button2" Command="{Binding UpdateCommand}" Grid.Column="3" Margin="18,90,52,221" />
-        <TextBlock Height="35" HorizontalAlignment="Left" Margin="95,-29,0,0" Name="textBlock1" Text="Diretórios" VerticalAlignment="Top" Opacity="5" FontSize="24" Grid.Column="1" Grid.ColumnSpan="2" />
-        <TextBlock Height="35" HorizontalAlignment="Left" Margin="98,-29,0,0" Name="textBlock2" Text="Arquivos" VerticalAlignment="Top" Opacity="5" Grid.Column="4" FontSize="24" Grid.ColumnSpan="2" />
+        <Button AllowDrop="False" Command="{Binding DownloadCommand}" Content="Restaurar" Height="23" HorizontalAlignment="Left" Margin="443,436,0,0" Name="RestoreButton" VerticalAlignment="Top" Width="75" />
+        <Button AllowDrop="False" Command="{Binding UpdateCommand}" Content="" Height="23" HorizontalAlignment="Left" Margin="370,445,0,0" Name="button2" VerticalAlignment="Top" Width="75" Visibility="Hidden" />
+        <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="243,131,0,0" Name="textBlock1" Opacity="5" Text="Diretórios" VerticalAlignment="Top" />
+        <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="630,131,0,0" Name="textBlock2" Opacity="5" Text="Arquivos" VerticalAlignment="Top" />
+        <Image Height="120" HorizontalAlignment="Left" Margin="12,12,0,0" Name="image1" Stretch="Fill" VerticalAlignment="Top" Width="201" Source="/BdatumRestore;component/Images/logo_bdatum.png" />
+        <Label Content="Selecione uma pasta ou os arquivos" Height="53" HorizontalAlignment="Left" Margin="324,12,0,0" Name="label1" VerticalAlignment="Top" FontSize="26" Width="418" />
+        <Label Content="para fazer restore." Height="56" HorizontalAlignment="Left" Margin="385,0,0,452" Name="label2" VerticalAlignment="Bottom" FontSize="26" Width="224" />
+        <Label Height="28" HorizontalAlignment="Left" Margin="426,131,0,0" Name="label3" VerticalAlignment="Top" Width="126" Foreground="#FFD11515" />
+        <ProgressBar Height="30" HorizontalAlignment="Left" Margin="236,507,0,0" Name="progressBar1" VerticalAlignment="Top" Width="506" />
+        <Label Foreground="Black" Height="28" HorizontalAlignment="Left" Margin="385,473,0,0" Name="label4" VerticalAlignment="Top" Width="167" Content="Progresso do download" />
     </Grid>
 </Window>

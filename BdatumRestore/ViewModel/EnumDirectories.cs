@@ -13,8 +13,8 @@ namespace BdatumRestore.ViewModel
     public class EnumDirectories
     {
         private List<IFolder> _EnumeratedFiles = new List<IFolder>();
-        private List<string> _FilesToDownload;
-        private DownloadProperties _DirProperties = new DownloadProperties();
+        private List<string> _FilesToDownload=new List<string>();
+        private List<DownloadProperties> _DirProperties = new List<DownloadProperties>();
 
         private List<IFolder> EnumeratedFiles
         {
@@ -28,7 +28,7 @@ namespace BdatumRestore.ViewModel
             }
         }
 
-        public List<IFolder> EnumFolderAndSubFolders(string initPath, IConfiguration configuration)
+        public List<string> EnumFolderAndSubFolders(string initPath, IConfiguration configuration)
         {
             List<BDatumFiles> FileList=new List<BDatumFiles>();
              Storage storage = new Storage(configuration);
@@ -40,30 +40,36 @@ namespace BdatumRestore.ViewModel
 
                  do
                  {
-                     FileList = storage.EnumerateFilesAndFolders(initPath);
-                     if (FileList != null)
+                     
+                     if (FileList != null && FileList.Count != 0)
                      {
 
-                         foreach (BDatumFiles directory in FileList)
+                         for(int i=0;i<FileList.Count;i++)
                          {
+                             BDatumFiles directory = (BDatumFiles)FileList[i];
                              if (directory.IsDirectory)
                              {
-                                 _DirProperties.isDirectory = true;
-                                 _DirProperties.DirPath = directory.FullName;
-
+                                 _DirProperties.Add(new DownloadProperties {isDirectory=true, DirPath=directory.FullName });
+                              
                              }
                              else
                                  _FilesToDownload.Add(directory.FullName);
-
                          }
                      }
-                 } while (FileList != null );
+                     FileList.Clear();
+                     if(_DirProperties.Count>0)
+                     {
+                         FileList = storage.EnumerateFilesAndFolders(_DirProperties[0].DirPath);
+                         _DirProperties.Remove(_DirProperties[0]);
+                     }
+
+                 } while (FileList.Count != 0 );
 
                  #endregion
 
              
 
-                return _EnumeratedFiles;
+                return _FilesToDownload;
         }
     }
 }

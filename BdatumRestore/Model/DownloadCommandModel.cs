@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using BdatumRestore.ViewModel;
+using System.Threading;
 
 namespace BdatumRestore.Model
 {
+
     class DownloadCommandModel:ICommand
     {
+        public delegate void DownloadStart();
+
         public DownloadCommandModel(ListFolder ListFolderInstance,string path)
         {
             _ListFolder = ListFolderInstance;
@@ -30,7 +34,10 @@ namespace BdatumRestore.Model
 
         public void Execute(object parameter)
         {
-           _ListFolder.Download();
+            Thread thread = new Thread(new ThreadStart(() => _ListFolder.Download()));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            //_ListFolder.Download();            
         }
     }
 }
