@@ -28,30 +28,19 @@ namespace BdatumRestore.View
         private ListFolder _Update { get; set; }
         public FolderBrowserDialog browseDialog { get; set; }
         public System.Windows.Forms.IWin32Window win32Handle { get; set; }
+        
         public MainWindow()
         {
             browseDialog = new FolderBrowserDialog();
             InitializeComponent();
+            CenterWindowOnScreen();
             DataContext=new ListFolder(this);
+            FilesExistLabel.Content = "";
         }
 
-        private void TreeView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ClickCount > 1)
-            {
-    
-                _Update = DataContext as ListFolder;
-                _Update.UpdateCommand.Execute(null);
-            }
-        }
-
-        private void TreeViewItem_Expanded(object sender, RoutedEventArgs e)
-        {
-                _Update = DataContext as ListFolder;
-                _Update.UpdateCommand.Execute(null);
-            
-        }
-
+        /// <summary>
+        /// Método para mostrar o FolderBrowserDialog
+        /// </summary>
         public void ShowBrowseDialog()
         {
             
@@ -63,8 +52,18 @@ namespace BdatumRestore.View
                          }));
             browseDialog.ShowDialog(win32Handle);
         }
+        /// <summary>
+        /// Método para centralizar a tela
+        /// </summary>
+        private void CenterWindowOnScreen()
+        {
+            double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+            double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+            double windowWidth = this.Width;
+            double windowHeight = this.Height;
+            this.Left = (screenWidth / 2) - (windowWidth / 2);
+            this.Top = (screenHeight / 2) - (windowHeight / 2);
+        }
 
-       
-       
     }
 }
