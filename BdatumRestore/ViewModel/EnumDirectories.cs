@@ -12,6 +12,7 @@ namespace BdatumRestore.ViewModel
     using BdatumRestore.Model;
     public class EnumDirectories
     {
+        #region Private Properties
         private List<IFolder> _EnumeratedFiles = new List<IFolder>();
         private List<string> _FilesToDownload=new List<string>();
         private List<DownloadProperties> _DirProperties = new List<DownloadProperties>();
@@ -27,6 +28,7 @@ namespace BdatumRestore.ViewModel
                 _EnumeratedFiles = value;
             }
         }
+        #endregion
 
         public List<string> EnumFolderAndSubFolders(string initPath, IConfiguration configuration)
         {
@@ -36,7 +38,7 @@ namespace BdatumRestore.ViewModel
                  FileList = storage.EnumerateFilesAndFolders(initPath);
 
                  //Melhorar Esse bloco de codigo!!!!!!!
-                 #region  foreach block
+                 #region  Enumeration block
 
                  do
                  {

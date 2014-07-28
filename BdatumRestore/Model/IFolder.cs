@@ -6,6 +6,9 @@ using System.Collections.ObjectModel;
 
 namespace BdatumRestore.ViewModel
 {
+    /// <summary>
+    /// Interface dos Folder
+    /// </summary>
     public interface IFolder
     {
         string FullPath { get; }

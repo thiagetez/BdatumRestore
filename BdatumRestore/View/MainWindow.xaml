@@ -4,10 +4,10 @@
         xmlns:local="clr-namespace:BdatumRestore.ViewModel"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:vm="clr-namespace:BdatumRestore.ViewModel"
-        Title="MainWindow" Height="618" Width="950" Icon="/BdatumRestore;component/Images/favicon_bdatum.ico" ResizeMode="NoResize">
+        Title="B-Datum Restore" Height="618" Width="950" Icon="/BdatumRestore;component/Images/favicon_bdatum.ico" ResizeMode="NoResize" Closing="Window_Closing">
     
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="Grid">
-        <TreeView AllowDrop="False" Background="#FFF0F0F0" HorizontalAlignment="Left" ItemsSource="{Binding Folders}" Margin="148,170,0,149" Name="TreeView1" Width="313" BorderThickness="1" BorderBrush="#FF1D79B3" Opacity="1" Focusable="False">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="Grid" Background="#FFF0F0F0">
+        <TreeView AllowDrop="False" Background="White" HorizontalAlignment="Left" ItemsSource="{Binding Folders}" Margin="148,170,0,149" Name="TreeView1" Width="313" BorderThickness="1" BorderBrush="Black" Opacity="1" Focusable="False">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="Focusable" Value="False"/>
@@ -39,14 +39,14 @@
                 </Style>
             </TreeView.Resources>
         </TreeView>
-        <ListBox AllowDrop="False" Background="White" ItemsSource="{Binding Files}" Margin="507,168,95,149" Name="FileList" SelectionMode="Multiple" BorderThickness="0" BorderBrush="#FF1D79B3" Opacity="1" Focusable="False">
+        <ListBox AllowDrop="False" Background="White" ItemsSource="{Binding Files}" Margin="504,170,108,149" Name="FileList" SelectionMode="Multiple" BorderThickness="1" BorderBrush="Black" Opacity="1" Focusable="False">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Label Content="{Binding FileName}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button AllowDrop="False" Command="{Binding DownloadCommand}" Content="Restaurar" Height="23" HorizontalAlignment="Left" Margin="443,450,0,0" Name="RestoreButton" VerticalAlignment="Top" Width="75" BorderBrush="{x:Null}" BorderThickness="0">
+        <Button AllowDrop="False" Command="{Binding DownloadCommand}" Content="Restaurar" Height="23" HorizontalAlignment="Left" Margin="606,450,0,0" Name="RestoreButton" VerticalAlignment="Top" Width="75" BorderBrush="{x:Null}" BorderThickness="0">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF0096FF" Offset="0.25" />
@@ -58,7 +58,7 @@
         <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="243,131,0,0" Name="textBlock1" Opacity="5" Text="Diretórios" VerticalAlignment="Top" />
         <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="630,131,0,0" Name="textBlock2" Opacity="5" Text="Arquivos" VerticalAlignment="Top" />
         <Image Height="120" HorizontalAlignment="Left" Margin="12,12,0,0" Name="image1" Stretch="Fill" VerticalAlignment="Top" Width="201" Source="/BdatumRestore;component/Images/logo_bdatum.png" />
-        <Label Content="Selecione uma pasta ou os arquivos" Height="53" HorizontalAlignment="Left" Margin="281,12,0,0" Name="label1" VerticalAlignment="Top" FontSize="26" Width="418">
+        <Label Content="Selecione uma pasta ou os arquivos." Height="53" HorizontalAlignment="Left" Margin="281,26,0,0" Name="label1" VerticalAlignment="Top" FontSize="26" Width="508">
             <Label.Foreground>
                 <RadialGradientBrush>
                     <GradientStop Color="Black" Offset="0" />
@@ -74,7 +74,7 @@
                 </RadialGradientBrush>
             </Label.Foreground>
         </Label>
-        <Label Height="28" HorizontalAlignment="Left" Margin="426,131,0,0" Name="label3" VerticalAlignment="Top" Width="126" Foreground="#FFD11515" />
+        <Label  Height="28" HorizontalAlignment="Left" Margin="385,131,0,0" Name="SelectedDir" Content="{Binding FolderSelected}" VerticalAlignment="Top" Width="211" Foreground="#FFD11515" HorizontalContentAlignment="Center" />
         <ProgressBar Height="19" HorizontalAlignment="Left" Margin="236,518,0,0" Name="progressBar1" VerticalAlignment="Top" Width="506" BorderBrush="Black">            
             <ProgressBar.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -85,16 +85,16 @@
                 </LinearGradientBrush>
             </ProgressBar.Background>
         </ProgressBar>
-        <Label Foreground="Black" Height="28" HorizontalAlignment="Left" Margin="414,486,0,0" Name="ProgressLabel" VerticalAlignment="Top" Width="254" Content="Progresso do download" />
+        <Label Foreground="Black" Height="28" HorizontalAlignment="Left" Margin="236,486,0,0" Name="ProgressLabel" VerticalAlignment="Top" Width="506" Content="Progresso do download" HorizontalContentAlignment="Center" />
         <Label Content="{}{FilesExistLabel}" Height="28" HorizontalAlignment="Left" Margin="589,170,0,0" Name="FilesExistLabel" VerticalAlignment="Top" Foreground="#FFFC0000" />
-        <Grid.Background>
-            <RadialGradientBrush>
-                <GradientStop Color="#FF166BBA" Offset="0" />
-                <GradientStop Color="#FF0B60A7" Offset="1" />
-                <GradientStop Color="#FF1F7DB1" Offset="0.448" />
-            </RadialGradientBrush>
-        </Grid.Background>
-        
+        <Button AllowDrop="False" BorderBrush="{x:Null}" BorderThickness="0" Command="{Binding PauseCommand}" Content="Pausar" Height="23" HorizontalAlignment="Left" Margin="281,450,0,0" Name="PauseButton" VerticalAlignment="Top" Width="75">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF0096FF" Offset="0.25" />
+                    <GradientStop Color="#FF1569A0" Offset="0.814" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
     </Grid>
     <Window.Background>
         <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">

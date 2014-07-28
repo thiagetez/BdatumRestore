@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
+using BdatumRestore.ViewModel;
 
-namespace BdatumRestore.ViewModel
+namespace BdatumRestore.Model
 {
-    /// <summary>
-    /// Comando de Update da TreeView
-    /// </summary>
-    public class UpdateTreeViewCommandModel:ICommand
+    class PauseCommandModel:ICommand
     {
         private ListFolder _ListFolderInstance { get; set; }
 
-        public UpdateTreeViewCommandModel(ListFolder Handler)
+        public PauseCommandModel(ListFolder Handler)
         {
             _ListFolderInstance = Handler;
         }
@@ -31,7 +29,7 @@ namespace BdatumRestore.ViewModel
 
         public void Execute(object parameter)
         {
-            _ListFolderInstance.UpdateTreeView(parameter);
+            _ListFolderInstance.PauseDownload();
         }
     }
 }

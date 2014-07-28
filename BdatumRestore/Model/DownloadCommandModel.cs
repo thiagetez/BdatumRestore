@@ -8,19 +8,20 @@ using System.Threading;
 
 namespace BdatumRestore.Model
 {
-
+    /// <summary>
+    /// Comando do download
+    /// </summary>
     class DownloadCommandModel:ICommand
     {
         public delegate void DownloadStart();
 
-        public DownloadCommandModel(ListFolder ListFolderInstance,string path)
+        public DownloadCommandModel(ListFolder ListFolderInstance)
         {
-            _ListFolder = ListFolderInstance;
-            _Path = path;
+            _ListFolder = ListFolderInstance;            
         }
 
         private ListFolder _ListFolder { get; set; }
-        private string _Path { get; set; }
+
         public bool CanExecute(object parameter)
         {
             return true;
