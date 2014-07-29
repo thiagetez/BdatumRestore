@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Newtonsoft.Json;
+using BDatum.SDK.REST;
 
 namespace BdatumRestore.ViewModel
 {
@@ -13,7 +14,7 @@ namespace BdatumRestore.ViewModel
     public class PausedRestore
     {
 
-        public void CreateRestoreFiles(List<string> Files)
+        public void CreateRestoreFiles(List<RemoteFile> Files)
         {
             string output = JsonConvert.SerializeObject(Files);
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
@@ -32,11 +33,11 @@ namespace BdatumRestore.ViewModel
             file.Close();
         }
 
-        public List<string> RestoreFiles()
+        public List<RemoteFile> RestoreFiles()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
             StreamReader reader = new StreamReader(path);
-            List<string> listFiles = JsonConvert.DeserializeObject<List<string>>(reader.ReadToEnd());
+            List<RemoteFile> listFiles = JsonConvert.DeserializeObject<List<RemoteFile>>(reader.ReadToEnd());
 
             return listFiles;
         }

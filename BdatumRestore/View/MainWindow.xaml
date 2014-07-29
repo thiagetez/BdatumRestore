@@ -4,10 +4,10 @@
         xmlns:local="clr-namespace:BdatumRestore.ViewModel"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:vm="clr-namespace:BdatumRestore.ViewModel"
-        Title="B-Datum Restore" Height="618" Width="950" Icon="/BdatumRestore;component/Images/favicon_bdatum.ico" ResizeMode="NoResize" Closing="Window_Closing">
+        Title="B-Datum Restore" Height="618" Width="950" Icon="/BdatumRestore;component/Images/favicon_bdatum.ico" ResizeMode="CanMinimize" Closing="Window_Closing" BorderBrush="#FF170303" AllowDrop="True" BorderThickness="0" WindowStyle="SingleBorderWindow">
     
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="Grid" Background="#FFF0F0F0">
-        <TreeView AllowDrop="False" Background="White" HorizontalAlignment="Left" ItemsSource="{Binding Folders}" Margin="148,170,0,149" Name="TreeView1" Width="313" BorderThickness="1" BorderBrush="Black" Opacity="1" Focusable="False">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="Grid" Background="#FFDDDDDD">
+        <TreeView AllowDrop="False" Background="White" HorizontalAlignment="Left" ItemsSource="{Binding Folders}" Margin="148,170,0,149" Name="TreeView1" Width="313" BorderBrush="Black" Opacity="1" Focusable="False" BorderThickness="1">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="Focusable" Value="False"/>
@@ -58,7 +58,7 @@
         <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="243,131,0,0" Name="textBlock1" Opacity="5" Text="Diretórios" VerticalAlignment="Top" />
         <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="630,131,0,0" Name="textBlock2" Opacity="5" Text="Arquivos" VerticalAlignment="Top" />
         <Image Height="120" HorizontalAlignment="Left" Margin="12,12,0,0" Name="image1" Stretch="Fill" VerticalAlignment="Top" Width="201" Source="/BdatumRestore;component/Images/logo_bdatum.png" />
-        <Label Content="Selecione uma pasta ou os arquivos." Height="53" HorizontalAlignment="Left" Margin="281,26,0,0" Name="label1" VerticalAlignment="Top" FontSize="26" Width="508">
+        <Label Content="Selecione uma pasta ou os arquivos." Height="53" Margin="281,26,139,0" Name="label1" VerticalAlignment="Top" FontSize="26">
             <Label.Foreground>
                 <RadialGradientBrush>
                     <GradientStop Color="Black" Offset="0" />

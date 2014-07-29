@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using BDatum.SDK.REST;
 
 namespace BdatumRestore.ViewModel
 {
@@ -10,7 +11,7 @@ namespace BdatumRestore.ViewModel
     {
         private int _ErrorCount { get; set; }
         private int _FileCount { get; set; }
-        private Dictionary<string, Exception> _ErrorLog = new Dictionary<string, Exception>();
+        private Dictionary<RemoteFile, Exception> _ErrorLog = new Dictionary<RemoteFile, Exception>();
 
         public void CreateLogFile(int filecount, int errorcount)
         {
@@ -34,9 +35,9 @@ namespace BdatumRestore.ViewModel
             StreamWriter writer = new StreamWriter(logpath);
             writer2.WriteLine(String.Format("Numero de arquivos solicitado para baixar: {0} \n\n Numero de erros encontrados: {1}\n\n Arquivos que falharam: \n\n ", filecount, errorcount));
             
-            foreach (KeyValuePair<string, Exception> error in _ErrorLog)
+            foreach (KeyValuePair<RemoteFile, Exception> error in _ErrorLog)
             {
-                writer.WriteLine(String.Format("Error in File: {0}\n\n Exception: {1}\n\n ",error.Key,error.Value));
+                writer.WriteLine(String.Format("Error in File: {0}\n\n Exception: {1}\n\n ",error.Key.Name,error.Value));
                 writer2.WriteLine(String.Format("{0}\n\n", error.Key));
             }
 
@@ -54,13 +55,13 @@ namespace BdatumRestore.ViewModel
             }
             StreamWriter writer = new StreamWriter(logpath);
 
-            foreach (KeyValuePair<string, Exception> error in _ErrorLog)
+            foreach (KeyValuePair<RemoteFile, Exception> error in _ErrorLog)
             {
                 writer.WriteLine(String.Format("Error!!! \n\n Exception: {0}\n\n ",e));               
             }
         }
 
-        public void AddError(Exception e, string path)
+        public void AddError(Exception e,RemoteFile path)
         {
             _ErrorLog.Add(path, e);
         }

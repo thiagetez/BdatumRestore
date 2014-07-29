@@ -88,7 +88,8 @@ namespace BdatumRestore.View
                MessageBoxResult result=System.Windows.MessageBox.Show("Deseja pausar o download e sair?", "Pausar download?", MessageBoxButton.YesNo);
                 if(result==MessageBoxResult.Yes)
                 {
-                    _Listfolder.PauseDownload();                   
+                    _Listfolder.PauseDownload(); 
+                    
                 }
             }
         }

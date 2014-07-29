@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Configuration;
-using Newtonsoft.Json;
+
 
 namespace BdatumRestore.ViewModel
 {
-
+    using Newtonsoft.Json;
     using BDatum.SDK;
     using BDatum.SDK.REST;
     using System.IO;
@@ -21,43 +21,83 @@ namespace BdatumRestore.ViewModel
     using System.Windows;
     using System.Threading;
     using System.Windows.Threading;
+    using System.Threading.Tasks;
 
     //Classe que lista as pastas
 
     public class ListFolder:INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        public List<string> FileList;
-
+        #region private properties
+        /// <summary>
+        /// Instancia da classe ErrorLogs
+        /// </summary>
         private ErrorLogs _ErrorLogs = new ErrorLogs();
 
-        public bool isBusy { get; set; }
-
+        /// <summary>
+        /// Path do folder que foi selecionado
+        /// </summary>
         private string _FolderSelected { get; set; }
 
-        public delegate void updateBar(int value);
-
-        public updateBar delegateUpdateBar;
-
+        /// <summary>
+        /// Instancia da interface IConfiguration para configurar a conexão
+        /// </summary>
         private static IConfiguration _configuration { get; set; }
 
+        /// <summary>
+        /// Instancia do EnumDirectories para fazer a enumeração dos arquivos
+        /// nas pastas e subpastas
+        /// </summary>
         private EnumDirectories _EnumDir { get; set; }
 
+        /// <summary>
+        /// Contador de diretórios
+        /// </summary>
         private int _FoldersCount { get; set; }
 
+        /// <summary>
+        /// Contador de arquivos com erros
+        /// </summary>
         private int _ErrorCount { get; set; }
 
+        /// <summary>
+        /// Contem todas as informações do item da TreeView selecionada
+        /// </summary>
         private IFolder _SelectedFolder { get; set; }
 
+        /// <summary>
+        /// Contador de itens
+        /// </summary>
         private int _ItensCount { get; set; }
 
+        /// <summary>
+        /// Define se o usuario pausou a operação
+        /// </summary>
         private bool _Pause { get; set; }
+
+        /// <summary>
+        /// Define se um erro ocorreu
+        /// </summary>
         private bool _ErrorOcurred { get; set; }
 
-        public static string SelectedItemPath { get; set; }
-        //public static string currentPath = String.Format("{0}{1}", Path.GetTempPath(), "UploadFileTest");
+        /// <summary>
+        /// Instancia do Window
+        /// </summary>
         private static MainWindow _MainWindow { get; set; }
+
+        #endregion
+
+        #region public properties
+        
+        /// <summary>
+        /// Lista de arquivos
+        /// </summary>
+        public List<RemoteFile> FileList;
+
+        /// <summary>
+        /// Define se o restore esta sendo executado
+        /// </summary>
+        public bool isBusy { get; set; }
 
         /// <summary>
         /// Comando de Update
@@ -74,6 +114,13 @@ namespace BdatumRestore.ViewModel
         /// </summary>
         public ICommand DownloadCommand { get; set; }
         
+        #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        //public static string currentPath = String.Format("{0}{1}", Path.GetTempPath(), "UploadFileTest");
+        
+
         /// <summary>
         /// Construtor da classe
         /// </summary>
@@ -99,13 +146,13 @@ namespace BdatumRestore.ViewModel
             if (File.Exists(path))
             {
                 
-                MessageBoxResult msg= MessageBox.Show("Você tem um restore pendente. Deseja retoma-lo?", "Restore pendente encontrado", MessageBoxButton.YesNo);
+                MessageBoxResult msg= MessageBox.Show(I18n.MessagesResource.PendingRestore, "Restore pendente encontrado", MessageBoxButton.YesNo);
 
                 if (msg == MessageBoxResult.Yes)
                 {
                     PausedRestore pause = new PausedRestore();
 
-                    List<string> list = pause.RestoreFiles();
+                    List<RemoteFile> list = pause.RestoreFiles();
                     _MainWindow.ShowBrowseDialog();
 
                     Thread thread = new Thread(new ThreadStart(() => this.DownloadCore(list)));
@@ -137,7 +184,9 @@ namespace BdatumRestore.ViewModel
             }
         }
 
-
+        /// <summary>
+        /// Propriedade da pasta selecionada
+        /// </summary>
         public string FolderSelected
         {
             get
@@ -152,6 +201,9 @@ namespace BdatumRestore.ViewModel
             }
         }
 
+        /// <summary>
+        /// Propriedade com as informações da pasta selecionada
+        /// </summary>
         public IFolder SelectedFolder
         {
             get
@@ -195,7 +247,7 @@ namespace BdatumRestore.ViewModel
                 string json=reader.ReadToEnd();
                 AuthenticationProperties auth = JsonConvert.DeserializeObject<AuthenticationProperties>(json);
 
-                //////TEST ONLY
+                ////////TEST ONLY
                 IAuthentication _authentication = new Authentication("NEKSP7b6hoktg4nIg5u4", "XGzzNadCLjXFpQjTuJYF");
 
                 //IAuthentication _authentication = new Authentication(auth.NodeKey, auth.PartnerKey);
@@ -230,13 +282,16 @@ namespace BdatumRestore.ViewModel
             try
             {
                 this.isBusy = true;
+                this._Pause = false;
                 Application.Current.Dispatcher.Invoke(
                      DispatcherPriority.Background,
                          (Action)(() =>
                             {
                               _MainWindow.RestoreButton.IsEnabled = false;
-                              _MainWindow.ProgressLabel.Content = "Preparando Download";
+                              _MainWindow.ProgressLabel.Content =I18n.MessagesResource.PreparingDownload;
                               _MainWindow.progressBar1.Value =0;
+                              _MainWindow.TreeView1.IsEnabled = false;
+                              _MainWindow.FileList.IsEnabled = false;
                              }));
                 bool arg1=false;
                 bool arg2=false;
@@ -260,7 +315,7 @@ namespace BdatumRestore.ViewModel
 
                 if (arg1 == true && arg2 == true && _MainWindow.browseDialog.SelectedPath != "")                  
                 {
-                    List<string> filelist = new List<string>();
+                    List<RemoteFile> filelist = new List<RemoteFile>();
 
                         Application.Current.Dispatcher.Invoke(
                          DispatcherPriority.Background,
@@ -268,32 +323,35 @@ namespace BdatumRestore.ViewModel
                          {
                              foreach (IFolder item in _MainWindow.FileList.SelectedItems)
                              {
-                                 filelist.Add(item.FullPath);
+                                 RemoteFile file = new RemoteFile(item.FullPath);
+                                 filelist.Add(file);
                              }
 
                          }));
-
-
 
                         DownloadCore(filelist);
                 }
                 else if (_SelectedFolder != null && _MainWindow.browseDialog.SelectedPath != "")
                 {
-                    List<string> filelist = _EnumDir.EnumFolderAndSubFolders(_SelectedFolder.FullPath, _configuration);
+                    List<RemoteFile> filelist = _EnumDir.EnumFolderAndSubFoldersCache(_SelectedFolder.FullPath, _configuration);
                     
                     DownloadCore(filelist);
                 }
                 else
                 {
-                    _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => MessageBox.Show(_MainWindow, "Você precisa selecionar uma pasta ou arquivos para fazer restore ou não selecionou uma pasta para gravar os arquivos", "Erro no download")));
-                    _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Erro no download"));
+                    _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => MessageBox.Show(_MainWindow, I18n.MessagesResource.NoDirOrFileSelected, I18n.MessagesResource.DownloadErrorGeneric)));
+                    _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = I18n.MessagesResource.DownloadErrorGeneric));
                     _MainWindow.RestoreButton.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.RestoreButton.IsEnabled = true));
+                    _MainWindow.TreeView1.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = true));
+                    _MainWindow.FileList.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = true));
                 }
           }catch (Exception e)
              {
                  _ErrorLogs.CreateLogFile(e);
-                 _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Erro no download"));
+                 _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = I18n.MessagesResource.DownloadErrorGeneric));
                 _MainWindow.RestoreButton.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.RestoreButton.IsEnabled = true));
+                _MainWindow.TreeView1.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = true));
+                _MainWindow.FileList.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = true));
              }
         }
 
@@ -301,10 +359,12 @@ namespace BdatumRestore.ViewModel
         /// Faz Download dos arquivos
         /// </summary>
         /// <param name="Files"></param>
-        private void DownloadCore(List<string> fileList )
+        private void DownloadCore(List<RemoteFile> fileList )
         {
+            //Cria lista de arquivos para salvar caso ocorra algum erro
+            //ou a operação seja pausada
+            FileList = new List<RemoteFile>(fileList);
 
-            FileList = new List<string>(fileList);
             Application.Current.Dispatcher.Invoke(
              DispatcherPriority.Background,
              (Action)(() =>
@@ -316,21 +376,20 @@ namespace BdatumRestore.ViewModel
 
             int filescount = 0;
 
-            
-            foreach (string path in fileList)
+            ParallelOptions options=new ParallelOptions();
+            Parallel.ForEach(fileList,options, line =>
             {
-                string downloadDir = path.Replace("/", @"\");
-                Storage storage = new Storage(_configuration);
                 if (_Pause == false)
                 {
-
-                    try { storage.Download(path, _MainWindow.browseDialog.SelectedPath + Path.GetDirectoryName(downloadDir)); }
-                    catch (Exception e) { _ErrorLogs.AddError(e, path); _ErrorOcurred = true; _ErrorCount++; }
+                Storage storage = new Storage(_configuration);
+               
+                    //Usar try para pegar a exceção sem parar a fila de download.
+                    try { storage.Download(line.Name, _MainWindow.browseDialog.SelectedPath + Path.GetDirectoryName(line.Name)); }
+                    catch (Exception e) { _ErrorLogs.AddError(e, line); _ErrorOcurred = true; _ErrorCount++; }
                     finally
                     {
-
-                        FileList.Remove(path);
-                        _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = String.Format("Arquivo:{0} {1}/{2}", Path.GetFileName(path), filescount + 1, fileList.Count)));
+                        FileList.Remove(line);
+                        _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = String.Format("Arquivo:{0} {1}/{2}", Path.GetFileName(line.Name), filescount + 1, fileList.Count)));
                         Application.Current.Dispatcher.Invoke(
                             DispatcherPriority.Background,
                                (Action)(() =>
@@ -345,38 +404,57 @@ namespace BdatumRestore.ViewModel
                     _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Download Pausado"));
                     _MainWindow.RestoreButton.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.RestoreButton.IsEnabled = true));
                     _MainWindow.RestoreButton.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.PauseButton.IsEnabled = false));
+                    _MainWindow.TreeView1.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = true));
+                    _MainWindow.FileList.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = true));
+                    isBusy = false;
+                    options.CancellationToken.ThrowIfCancellationRequested();
                     return;
                 }
+            });
+	  
 
-            }
 
-            if (_ErrorOcurred == false)
+            if (_ErrorOcurred == false && _Pause==false )
             {
                 _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Download completo"));
                 _MainWindow.RestoreButton.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.RestoreButton.IsEnabled = true));
+                _MainWindow.TreeView1.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = true));
+                _MainWindow.FileList.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = true));
+                isBusy = false;
             }
             else
             {
                 _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Download incompleto, verifique o log em Documents/bdatum/Logs ou contacte o suporte."));
                 _MainWindow.RestoreButton.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.RestoreButton.IsEnabled = true));
+                _MainWindow.TreeView1.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = true));
+                _MainWindow.FileList.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = true));
                 _ErrorLogs.CreateLogFile(filescount, _ErrorCount);
+                isBusy = false;
 
             }
 
             string pausedpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
-            if (File.Exists(pausedpath))
+            if (File.Exists(pausedpath) && _Pause==false)
                 File.Delete(pausedpath);
+            isBusy = false;
         
         }
 
         internal void PauseDownload()
         {
-            MessageBoxResult result = MessageBox.Show("Você deseja interromper o restore?\nVocê pode retoma-lo na proxima vez que executar o programa.", "Interromper restore?", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(I18n.MessagesResource.PausedDownloadMessage, "Interromper restore?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
+                List<RemoteFile> list;
                 _Pause = true;
                 PausedRestore paused = new PausedRestore();
-                paused.CreateRestoreFiles(FileList);
+                lock (FileList)
+                {
+                    list = new List<RemoteFile>(FileList);
+                }
+                    paused.CreateRestoreFiles(list);
+                
+                    isBusy = false;
             }
         }
 
@@ -397,7 +475,7 @@ namespace BdatumRestore.ViewModel
                     if (file.IsDirectory)
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2] + @"\", FullPath = file.FullName, isFolder = file.IsDirectory });
+                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory });
                     }
                     else
                     {
@@ -409,7 +487,7 @@ namespace BdatumRestore.ViewModel
             }
             catch (Exception e)
             {
-                MessageBox.Show("Ocorreu um erro de autenticação, verifique suas credenciais e sua conexão","Fatal Error");
+                MessageBox.Show(I18n.MessagesResource.ConectionOrAuthError,"Fatal Error");
                 _MainWindow.Close();
             }
             
@@ -451,7 +529,7 @@ namespace BdatumRestore.ViewModel
                             {
                                 string[] dirname = file.FullName.Split('/');
                                 //Folders[index].Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory,isChildren=true});
-                                item.Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2] + @"\", FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true });
+                                item.Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true });
                             }
                         }
                         else
@@ -465,7 +543,7 @@ namespace BdatumRestore.ViewModel
                     }
                     if (_ItensCount == 0)
                     {
-                        _MainWindow.FilesExistLabel.Content = "Nenhum arquivo encontrado";
+                        _MainWindow.FilesExistLabel.Content = I18n.MessagesResource.NoFileFound;
                     }
                     else
                         _MainWindow.FilesExistLabel.Visibility = Visibility.Hidden;
@@ -483,7 +561,7 @@ namespace BdatumRestore.ViewModel
             {
                 Files.Clear();
                 _ItensCount = 0;
-                _MainWindow.FilesExistLabel.Content = "Nenhum arquivo encontrado";
+                _MainWindow.FilesExistLabel.Content = I18n.MessagesResource.NoFileFound;
                 _MainWindow.FilesExistLabel.Visibility = Visibility.Visible;
             }
         }
