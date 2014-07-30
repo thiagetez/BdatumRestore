@@ -18,8 +18,18 @@ namespace BdatumRestore.ViewModel
         public string FullPath { get; set; }
 
         public string FolderName { get; set; }
+
+        public int Version { get; set; }
+
+        public bool isVersion { get; set; }
+
         public string FileName { get; set; }
+        
         public bool isFolder { get; set; }
+        
+        public DateTime Date { get; set; }
+
+        public string Size { get; set; }
 
         public ObservableCollection<IFolder> m_folders;
 
@@ -29,6 +39,7 @@ namespace BdatumRestore.ViewModel
         }
 
         public bool isChildren { get; set; }
-      
+
+        public string Type { get; set; }
     }
 }

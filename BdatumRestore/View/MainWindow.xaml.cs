@@ -48,6 +48,7 @@ namespace BdatumRestore.View
             DataContext=new ListFolder(this);
             FilesExistLabel.Content = "";
             PauseButton.IsEnabled = false;
+            VersionButton.Visibility = Visibility.Hidden;
 
         }
 
@@ -81,17 +82,27 @@ namespace BdatumRestore.View
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _Listfolder = DataContext as ListFolder;
-
-            if (_Listfolder.isBusy == true)
+            if (DataContext != null)
             {
-               MessageBoxResult result=System.Windows.MessageBox.Show("Deseja pausar o download e sair?", "Pausar download?", MessageBoxButton.YesNo);
-                if(result==MessageBoxResult.Yes)
+                _Listfolder = DataContext as ListFolder;
+
+                if (_Listfolder.isBusy == true)
                 {
-                    _Listfolder.PauseDownload(); 
-                    
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Deseja pausar o download e sair?", "Pausar download?", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        _Listfolder.PauseDownload();
+
+                    }
                 }
             }
+        }
+
+        private void FileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _Listfolder = DataContext as ListFolder;
+            System.Windows.Controls.ListBox listbox = sender as System.Windows.Controls.ListBox;
+            _Listfolder.SelectionChanged(listbox, e);
         }
 
     }

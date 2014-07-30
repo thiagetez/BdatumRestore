@@ -14,7 +14,7 @@ namespace BdatumRestore.ViewModel
     public class PausedRestore
     {
 
-        public void CreateRestoreFiles(List<RemoteFile> Files)
+        public void CreateRestoreFiles(List<Folder> Files)
         {
             string output = JsonConvert.SerializeObject(Files);
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
@@ -33,13 +33,26 @@ namespace BdatumRestore.ViewModel
             file.Close();
         }
 
-        public List<RemoteFile> RestoreFiles()
+        public List<IFolder> RestoreFiles()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
-            StreamReader reader = new StreamReader(path);
-            List<RemoteFile> listFiles = JsonConvert.DeserializeObject<List<RemoteFile>>(reader.ReadToEnd());
+            try
+            {
 
-            return listFiles;
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
+                StreamReader reader = new StreamReader(path);
+                List<Folder> listFiles = JsonConvert.DeserializeObject<List<Folder>>(reader.ReadToEnd());
+                List<IFolder> files = new List<IFolder>();
+                foreach (Folder list in listFiles)
+                {
+                    files.Add(new Folder { FullPath = list.FullPath, Version = list.Version, isVersion = list.isVersion });
+                }
+
+                return files;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }
