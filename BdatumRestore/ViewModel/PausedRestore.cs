@@ -46,11 +46,13 @@ namespace BdatumRestore.ViewModel
                 {
                     files.Add(new Folder { FullPath = list.FullPath, Version = list.Version, isVersion = list.isVersion });
                 }
-
+                
                 return files;
             }
             catch (Exception e)
             {
+                ErrorLogs error = new ErrorLogs();
+                error.CreateLogFile(e);
                 return null;
             }
         }

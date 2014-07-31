@@ -53,11 +53,11 @@ namespace BdatumRestore.ViewModel
             {
                 using (File.Create(logpath)) { }
             }
-            StreamWriter writer = new StreamWriter(logpath);
-
-            foreach (KeyValuePair<string, Exception> error in _ErrorLog)
+            lock (logpath)
             {
-                writer.WriteLine(String.Format("Error!!! \n\n Exception: {0}\n\n ",e));               
+                StreamWriter writer = new StreamWriter(logpath);
+
+                writer.WriteLine(String.Format("Error!!! \n\n Exception: {0}\n\n ", e));
             }
         }
 

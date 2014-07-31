@@ -49,7 +49,7 @@ namespace BdatumRestore.View
             FilesExistLabel.Content = "";
             PauseButton.IsEnabled = false;
             VersionButton.Visibility = Visibility.Hidden;
-
+            ResumeButton.IsEnabled = false;
         }
 
         /// <summary>

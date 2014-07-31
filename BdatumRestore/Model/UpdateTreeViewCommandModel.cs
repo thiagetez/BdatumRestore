@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace BdatumRestore.ViewModel
 {
@@ -31,6 +32,8 @@ namespace BdatumRestore.ViewModel
 
         public void Execute(object parameter)
         {
+            //TreeViewItem tv = new TreeViewItem();
+            //tv.IsExpanded = true;
             _ListFolderInstance.UpdateTreeView(parameter);
         }
     }

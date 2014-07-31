@@ -22,6 +22,7 @@ namespace BdatumRestore.ViewModel
         DateTime Date { get; }
         string Size { get; }
         string Type { get; }
+        bool isExpanded { get; set; }
          [JsonProperty(PropertyName = "Version")]
         int Version { get; }
         bool isVersion { get; }

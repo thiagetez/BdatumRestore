@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace BdatumRestore.ViewModel
 {
@@ -30,6 +31,25 @@ namespace BdatumRestore.ViewModel
         public DateTime Date { get; set; }
 
         public string Size { get; set; }
+
+        public bool IsExpanded { get; set; }
+
+        public bool isExpanded
+        {
+            get { return IsExpanded; }
+            set
+            {
+                IsExpanded = value;
+                NotifiyPropertyChanged("isExpanded");
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifiyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
 
         public ObservableCollection<IFolder> m_folders;
 
