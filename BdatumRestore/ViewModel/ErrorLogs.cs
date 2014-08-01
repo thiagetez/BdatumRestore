@@ -16,7 +16,7 @@ namespace BdatumRestore.ViewModel
         public void CreateLogFile(int filecount, int errorcount)
         {
             string logpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\DownloadErrorLog.txt";
-            string userlogpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments) + @"\bdatum\Log\";
+            string userlogpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\bdatum\Log\";
 
             if (!File.Exists(logpath))
             {
@@ -33,12 +33,12 @@ namespace BdatumRestore.ViewModel
 
             StreamWriter writer2 = new StreamWriter(userlogpath + @"\DownloadErrorLog.txt");
             StreamWriter writer = new StreamWriter(logpath);
-            writer2.WriteLine(String.Format("Numero de arquivos solicitado para baixar: {0} \n\n Numero de erros encontrados: {1}\n\n Arquivos que falharam: \n\n ", filecount, errorcount));
+            writer2.WriteLine(String.Format("Numero de arquivos solicitado para baixar: {0} \n Numero de erros encontrados: {1}\n Arquivos que falharam: \n\n ", filecount, errorcount));
             
             foreach (KeyValuePair<string, Exception> error in _ErrorLog)
             {
-                writer.WriteLine(String.Format("Error in File: {0}\n\n Exception: {1}\n\n ",error.Key,error.Value));
-                writer2.WriteLine(String.Format("{0}\n\n", error.Key));
+                writer.WriteLine(String.Format("Error in File: {0}\n Exception: {1}\n ",error.Key,error.Value));
+                writer2.WriteLine(String.Format("{0}", error.Key));
             }
 
             writer.Close();

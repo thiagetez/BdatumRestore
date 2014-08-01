@@ -50,6 +50,7 @@ namespace BdatumRestore.View
             PauseButton.IsEnabled = false;
             VersionButton.Visibility = Visibility.Hidden;
             ResumeButton.IsEnabled = false;
+            BackButton.Visibility = Visibility.Hidden;
         }
 
         /// <summary>

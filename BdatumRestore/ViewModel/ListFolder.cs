@@ -94,6 +94,11 @@ namespace BdatumRestore.ViewModel
         /// </summary>
         private static MainWindow _MainWindow { get; set; }
 
+        /// <summary>
+        /// Lista dos detalhes
+        /// </summary>
+        private ObservableCollection<DownloadDetailsProperties> _DetailList { get; set; }
+
         #endregion
 
         #region public properties
@@ -133,6 +138,22 @@ namespace BdatumRestore.ViewModel
         /// </summary>
         public ICommand ResumeCommand { get; set; }
 
+        /// <summary>
+        /// Detalhes do status do arquivo
+        /// </summary>
+        public ObservableCollection<DownloadDetailsProperties> DetailList
+        {
+            get
+            {
+                return _DetailList;
+            }
+            set
+            {
+                _DetailList = value;
+                NotifiyPropertyChanged("DetailList");
+            }
+        }
+
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -155,6 +176,7 @@ namespace BdatumRestore.ViewModel
             _EnumDir=new EnumDirectories();
             m_folders = new ObservableCollection<IFolder>();
             m_files = new ObservableCollection<IFolder>();
+            DetailList =new ObservableCollection<DownloadDetailsProperties>();
             //TODO: listar pastas e arquivos em abas separadas
             AuthenticationMethod();
             CheckPausedRestore();
@@ -237,6 +259,7 @@ namespace BdatumRestore.ViewModel
             {
 
                 _SelectedFolder = value;
+                
                 FolderSelected = _SelectedFolder.FolderName;
             }
         }
@@ -271,9 +294,9 @@ namespace BdatumRestore.ViewModel
                 AuthenticationProperties auth = JsonConvert.DeserializeObject<AuthenticationProperties>(json);
 
                 ////////TEST ONLY
-                //IAuthentication _authentication = new Authentication("NEKSP7b6hoktg4nIg5u4", "XGzzNadCLjXFpQjTuJYF");
+                IAuthentication _authentication = new Authentication("NEKSP7b6hoktg4nIg5u4", "XGzzNadCLjXFpQjTuJYF");
 
-                IAuthentication _authentication = new Authentication(auth.NodeKey, auth.PartnerKey);
+                //IAuthentication _authentication = new Authentication(auth.NodeKey, auth.PartnerKey);
 
                 if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["bdatumURI"]))
                     _connection.ServiceURL = ConfigurationManager.AppSettings["bdatumURI"];
@@ -303,9 +326,7 @@ namespace BdatumRestore.ViewModel
         internal void Download()
         {
             try
-            {
-               
-
+            {               
                 this.isBusy = true;
                 this._Pause = false;
                 Application.Current.Dispatcher.Invoke(
@@ -360,12 +381,14 @@ namespace BdatumRestore.ViewModel
                 {
                     List<RemoteFile> filelist = _EnumDir.EnumFolderAndSubFoldersCache(_SelectedFolder.FullPath, _configuration);
 
-                    List<IFolder> files = new List<IFolder>();
+                    List<IFolder> files = new List<IFolder>(filelist.Count);
 
                     Parallel.ForEach(filelist, line =>
                     {
                         files.Add(new Folder {FullPath=line.Name,isVersion=false });
                     });
+
+
 
                     DownloadCore(files);
                 }
@@ -429,12 +452,22 @@ namespace BdatumRestore.ViewModel
                         storage.Download(line.FullPath, _MainWindow.browseDialog.SelectedPath + Path.GetDirectoryName(line.FullPath));
                         else
                             storage.Download(line.FullPath, _MainWindow.browseDialog.SelectedPath + Path.GetDirectoryName(line.FullPath), line.Version);
+                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
+                                     (Action)(() =>
+                                     {
+                                         DetailList.Add(new DownloadDetailsProperties { FileName = Path.GetFileName(line.FullPath), Status = "Baixado" });                                         
+                                     }));
                     }
                     catch (Exception e)
                     {
                         if (line != null) { _ErrorLogs.AddError(e, line.FullPath); _ErrorOcurred = true; _ErrorCount++; }
                         else
-                            _ErrorLogs.CreateLogFile(e); _ErrorOcurred = true; _ErrorCount++; 
+                            _ErrorLogs.CreateLogFile(e); _ErrorOcurred = true; _ErrorCount++;
+                                   Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
+                                       (Action)(() =>
+                                   {
+                                       DetailList.Add(new DownloadDetailsProperties { FileName = Path.GetFileName(line.FullPath), Status = "Erro no Download" });
+                                   }));
                     }
                     finally
                     {
@@ -577,22 +610,27 @@ namespace BdatumRestore.ViewModel
         {
                 bool isListed = false;
                 //Folder test = fileItem as Folder;
-                IFolder item = fileItem as IFolder;
-                if (item.isExpanded == true)
-                    item.isExpanded = false;
-                else
-                    item.isExpanded = true;
 
-                SelectedFolder = item;
-                if (item.Folders.Count != 0)
+            if(fileItem!=null)
+                SelectedFolder = fileItem as IFolder;
+
+              #region TODO: Arrumar a expansão dos itens da TreeView
+                if (SelectedFolder.isExpanded == true)
+                    SelectedFolder.isExpanded = false;
+                else
+                    SelectedFolder.isExpanded = true;
+             #endregion  
+
+                
+                if (SelectedFolder.Folders.Count != 0)
                 {
                     isListed = true;
                 }
                     List<BDatumFiles> FileList = new List<BDatumFiles>();
                     Storage storage = new Storage(_configuration);
-                    FileList = storage.EnumerateFilesAndFolders(item.FullPath);
+                    FileList = storage.EnumerateFilesAndFolders(SelectedFolder.FullPath);
                     _FoldersCount = Folders.Count();
-                    int index = Folders.IndexOf(item);
+                    int index = Folders.IndexOf(SelectedFolder);
                     //m_folders.Clear();
 
                     #region remove os arquivos da lista
@@ -609,7 +647,7 @@ namespace BdatumRestore.ViewModel
                             {
                                 string[] dirname = file.FullName.Split('/');
                                 //Folders[index].Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory,isChildren=true});
-                                item.Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true });
+                                SelectedFolder.Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true });
                             }
                         }
                         else
@@ -627,7 +665,7 @@ namespace BdatumRestore.ViewModel
                     }
                     else
                         _MainWindow.FilesExistLabel.Visibility = Visibility.Hidden;
-                
+                    _MainWindow.BackButton.Visibility = Visibility.Hidden;
             
             
          }
@@ -663,6 +701,7 @@ namespace BdatumRestore.ViewModel
                    _ItensCount++;
            }
            _MainWindow.VersionButton.Visibility = Visibility.Hidden;
+           _MainWindow.BackButton.Visibility = Visibility.Visible;
         }
 
         /// <summary>
