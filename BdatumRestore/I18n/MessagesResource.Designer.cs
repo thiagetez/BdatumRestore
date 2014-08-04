@@ -97,6 +97,15 @@ namespace BdatumRestore.I18n {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to O tamanho do caminho do arquivo é muito grande.
+        /// </summary>
+        internal static string PathTooLong {
+            get {
+                return ResourceManager.GetString("PathTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Você deseja interromper o restore?
         ///Você pode retoma-lo na proxima vez que executar o programa..
         /// </summary>

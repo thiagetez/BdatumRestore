@@ -129,6 +129,9 @@
   <data name="NoFileFound" xml:space="preserve">
     <value>Nem um arquivo encontrado.</value>
   </data>
+  <data name="PathTooLong" xml:space="preserve">
+    <value>O tamanho do caminho do arquivo é muito grande</value>
+  </data>
   <data name="PausedDownloadMessage" xml:space="preserve">
     <value>Você deseja interromper o restore?
 Você pode retoma-lo na proxima vez que executar o programa.</value>

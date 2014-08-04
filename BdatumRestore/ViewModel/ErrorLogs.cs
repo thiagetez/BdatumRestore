@@ -18,6 +18,7 @@ namespace BdatumRestore.ViewModel
             string logpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\DownloadErrorLog.txt";
             string userlogpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\bdatum\Log\";
 
+
             if (!File.Exists(logpath))
             {
                 using (File.Create(logpath)) { }
