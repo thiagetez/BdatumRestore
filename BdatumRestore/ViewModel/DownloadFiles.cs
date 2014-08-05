@@ -196,7 +196,13 @@ namespace BdatumRestore.ViewModel
                     }
                     catch (Exception e)
                     {
-                        if (line != null) { _ErrorLogs.AddError(e, line.FullPath); _ErrorOcurred = true; _ErrorCount++; if (!e.InnerException.InnerException.Message.Contains("404")) _RetryFiles.Add(line); }
+                        if (line != null) {
+                            _ErrorLogs.AddError(e, line.FullPath);
+                            _ErrorOcurred = true;
+                            _ErrorCount++;
+                            //if (e.InnerException.InnerException==null || !e.InnerException.InnerException.Message.Contains("404"))
+                                _RetryFiles.Add(line); 
+                        }
                         else
                          _ErrorLogs.CreateLogFile(e);
                         _ErrorOcurred = true; _ErrorCount++;
@@ -254,11 +260,16 @@ namespace BdatumRestore.ViewModel
                         _ErrorLogs.CreateLogFile(filescount, _ErrorCount);
                         DownloadCore(_RetryFiles);
                     }
-                    _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Download incompleto, verifique o log em Documents/bdatum/Logs ou contacte o suporte."));
                     _MainWindow.RestoreButton.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.RestoreButton.IsEnabled = true));
                     _MainWindow.TreeView1.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = true));
                     _MainWindow.FileList.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = true));
-                    _ErrorLogs.CreateLogFile(filescount, _ErrorCount);
+                    if (_ErrorCount > 0)
+                    {
+                        _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Download incompleto, verifique o log em Documents/bdatum/Logs ou contacte o suporte."));
+                        _ErrorLogs.CreateLogFile(filescount, _ErrorCount);
+                    }
+                    else
+                        _MainWindow.ProgressLabel.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.ProgressLabel.Content = "Download completo"));
                     isBusy = false;
                 }
                 else

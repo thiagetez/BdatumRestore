@@ -289,7 +289,8 @@ namespace BdatumRestore.ViewModel
             try
             {
                 IConnectionConfiguration _connection = new ConnectionConfiguration();
-                _connection.Proxy = new System.Net.WebProxy("127.0.0.1", 8888);
+                _connection.UserAgent = String.Format("{0} ({1})", "BDatum-Restore/1.0.0", Environment.OSVersion.ToString());
+                //_connection.Proxy = new System.Net.WebProxy("127.0.0.1", 8888);
 
                 string AuthPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum";
                 FileStream fs=new FileStream(AuthPath+@"\settings.json",FileMode.Open,FileAccess.Read);

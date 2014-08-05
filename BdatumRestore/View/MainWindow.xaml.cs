@@ -18,6 +18,8 @@ using BdatumRestore.Model;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using System.Threading;
+using System.Diagnostics;
+using EQATEC.Analytics.Monitor; 
 
 namespace BdatumRestore.View
 {
@@ -29,7 +31,25 @@ namespace BdatumRestore.View
         private ListFolder _Listfolder { get; set; }
         public FolderBrowserDialog browseDialog { get; set; }
         public System.Windows.Forms.IWin32Window win32Handle { get; set; }
-        private static String _mutexID = "{a8b65a4f-9ffb-46fd-a432-bdd3338c423e}";
+
+        public static Process SingleInstance()
+    // Returns a System.Diagnostics.Process pointing to
+    // a pre-existing process with the same name as the
+    // current one, if any; or null if the current process
+    // is unique.
+    {
+      Process curr = Process.GetCurrentProcess();
+      Process[] procs = Process.GetProcessesByName(curr.ProcessName);
+      foreach (Process p in procs)
+      {
+        if ((p.Id != curr.Id) &&
+            (p.MainModule.FileName == curr.MainModule.FileName))
+                return p;
+      }
+      return null;
+    }
+
+
 
         public MainWindow()
         {
@@ -37,12 +57,9 @@ namespace BdatumRestore.View
             InitializeComponent();
             CenterWindowOnScreen();
 
-            Mutex mutex = new Mutex(true, _mutexID);
-            bool wait = false;
-            wait = mutex.WaitOne(TimeSpan.Zero, wait);
-            if (!wait)
+            if (SingleInstance()!=null)
             {
-                System.Windows.MessageBox.Show("Você so pode ter um programa rodando por vez.");
+                System.Windows.MessageBox.Show("Você pode ter apenas um programa rodando por vez.");
                 this.Close();
             }
             DataContext=new ListFolder(this);
