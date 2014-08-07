@@ -13,7 +13,10 @@ namespace BdatumRestore.ViewModel
     /// </summary>
     public class PausedRestore
     {
-
+        /// <summary>
+        /// Cria o arquivo de restore
+        /// </summary>
+        /// <param name="Files"></param>
         public void CreateRestoreFiles(List<Folder> Files)
         {
             string output = JsonConvert.SerializeObject(Files);

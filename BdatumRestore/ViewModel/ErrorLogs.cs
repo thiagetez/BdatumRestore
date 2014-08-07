@@ -12,7 +12,11 @@ namespace BdatumRestore.ViewModel
         private int _ErrorCount { get; set; }
         private int _FileCount { get; set; }
         private Dictionary<string, Exception> _ErrorLog = new Dictionary<string, Exception>();
-
+        /// <summary>
+        /// cria os logs de erro
+        /// </summary>
+        /// <param name="filecount"></param>
+        /// <param name="errorcount"></param>
         public void CreateLogFile(int filecount, int errorcount)
         {
             string logpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\DownloadErrorLog.txt";

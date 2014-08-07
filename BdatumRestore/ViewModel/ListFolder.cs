@@ -242,13 +242,14 @@ namespace BdatumRestore.ViewModel
             m_folders = new ObservableCollection<IFolder>();
             m_files = new ObservableCollection<IFolder>();
             DetailList =new ObservableCollection<DownloadDetailsProperties>();
-            //TODO: listar pastas e arquivos em abas separadas
             AuthenticationMethod();
             CheckPausedRestore();
             InitTreeView();
         }
 
-        //Refazer esse metodo para baixar por versao tbm
+        /// <summary>
+        /// Checa se existiu um restore pausado
+        /// </summary>
         private void CheckPausedRestore()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
@@ -297,11 +298,6 @@ namespace BdatumRestore.ViewModel
                 var reader=new StreamReader(fs);
                 string json=reader.ReadToEnd();
                 AuthenticationProperties auth = JsonConvert.DeserializeObject<AuthenticationProperties>(json);
-
-                ////////TEST ONLY
-                //IAuthentication _authentication = new Authentication("NEKSP7b6hoktg4nIg5u4", "XGzzNadCLjXFpQjTuJYF");
-
-                //IAuthentication _authentication = new Authentication("6uAazfsYFez56nRYGyfZ", "XGzzNadCLjXFpQjTuJYF");
 
                 IAuthentication _authentication = new Authentication(auth.NodeKey, auth.PartnerKey);
 

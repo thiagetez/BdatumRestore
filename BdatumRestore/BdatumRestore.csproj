@@ -36,16 +36,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BDatum.SDK">
-      <HintPath>..\..\..\..\bdatum-sdk\BDatum.SDK\bin\Debug\BDatum.SDK.dll</HintPath>
+    <Reference Include="BDatum.SDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bdatum-sdk\BDatum.SDK\bin\Release\BDatum.SDK.dll</HintPath>
     </Reference>
+    <Reference Include="EQATEC.Analytics.Monitor, Version=3.0.206.0, Culture=neutral, PublicKeyToken=213c7c68adb58a17, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\EQATEC.Analytics.Monitor.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\bdatum-sdk\BDatum.SDK\bin\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RibbonControlsLibrary, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -54,6 +62,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -63,7 +73,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\UpdateCommandModel.cs" />
+    <Compile Include="I18n\MessagesResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MessagesResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DownloadCommandModel.cs" />
+    <Compile Include="Model\DownloadDetailsProperties.cs" />
+    <Compile Include="Model\DownloadProperties.cs" />
+    <Compile Include="Model\PauseCommandModel.cs" />
+    <Compile Include="Model\ResumeCommandModel.cs" />
+    <Compile Include="Model\VersionsCommandModel.cs" />
+    <Compile Include="Model\WindowWrapper.cs" />
+    <Compile Include="Model\AuthenticationProperties.cs" />
+    <Compile Include="ViewModel\CheckPathSize.cs" />
+    <Compile Include="ViewModel\DownloadFiles.cs" />
+    <Compile Include="ViewModel\FileVersion.cs" />
+    <Compile Include="ViewModel\EnumDirectories.cs" />
+    <Compile Include="ViewModel\ErrorLogs.cs" />
     <Compile Include="ViewModel\Folder.cs" />
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -73,17 +100,18 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ViewModel\IFolder.cs" />
+    <Compile Include="Model\IFolder.cs" />
     <Compile Include="ViewModel\ImageConverter.cs" />
     <Compile Include="ViewModel\ListFolder.cs" />
     <Compile Include="Model\UpdateTreeViewCommandModel.cs" />
+    <Compile Include="ViewModel\PausedRestore.cs" />
+    <Compile Include="ViewModel\SizeConverter.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\FormModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -97,6 +125,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="I18n\MessagesResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MessagesResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -109,10 +141,26 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\favicon_bdatum.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icon_blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\logo_bdatum.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resources\folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\file.png" />
+    <Resource Include="Images\media-play-pause-resume.png" />
+    <Resource Include="Images\Pause-Normal-Red-icon.png" />
+    <Resource Include="Images\start-icon.png" />
+    <Resource Include="Images\sync.png" />
+    <Resource Include="Images\uppd-refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

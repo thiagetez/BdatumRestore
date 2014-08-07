@@ -31,6 +31,12 @@ namespace BdatumRestore.ViewModel
         }
         #endregion
 
+        /// <summary>
+        /// Enumera todo o Folder que o usuario quer baixar
+        /// </summary>
+        /// <param name="initPath"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public List<string> EnumFolderAndSubFolders(string initPath, IConfiguration configuration)
         {
             List<BDatumFiles> FileList=new List<BDatumFiles>();
