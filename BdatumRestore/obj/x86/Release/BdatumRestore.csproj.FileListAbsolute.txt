@@ -1,0 +1,53 @@
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\bin\Release\BdatumRestore.exe.config
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\bin\Release\BdatumRestore.exe
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\bin\Release\BdatumRestore.pdb
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\bin\Release\BDatum.SDK.dll
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\bin\Release\Newtonsoft.Json.dll
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\bin\Release\BDatum.SDK.pdb
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\bin\Release\Newtonsoft.Json.xml
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\View\MainWindow.g.cs
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\App.g.cs
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore_MarkupCompile.cache
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore_MarkupCompile.lref
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\View\MainWindow.baml
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.g.resources
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.Properties.Resources.resources
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.csproj.GenerateResource.Cache
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.exe
+C:\Users\thiago\Documents\Visual Studio 2010\Projects\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.pdb
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\bin\Release\BdatumRestore.exe.config
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\bin\Release\BdatumRestore.exe
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\bin\Release\BdatumRestore.pdb
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\bin\Release\BDatum.SDK.dll
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\bin\Release\BDatum.SDK.pdb
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\View\MainWindow.g.cs
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\App.g.cs
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore_MarkupCompile.cache
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore_MarkupCompile.lref
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\View\MainWindow.baml
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.g.resources
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.I18n.MessagesResource.resources
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.Properties.Resources.resources
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.csproj.GenerateResource.Cache
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.exe
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.pdb
+C:\Users\thiago\Documents\BdatumRestore\BdatumRestore\obj\x86\Release\BdatumRestore.csprojResolveAssemblyReference.cache
+C:\Users\thiago\Documents\bdatum\BdatumRestore\bin\Release\BdatumRestore.exe.config
+C:\Users\thiago\Documents\bdatum\BdatumRestore\bin\Release\BdatumRestore.exe
+C:\Users\thiago\Documents\bdatum\BdatumRestore\bin\Release\BdatumRestore.pdb
+C:\Users\thiago\Documents\bdatum\BdatumRestore\bin\Release\BDatum.SDK.dll
+C:\Users\thiago\Documents\bdatum\BdatumRestore\bin\Release\BDatum.SDK.pdb
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\View\MainWindow.g.cs
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\App.g.cs
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore_MarkupCompile.cache
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore_MarkupCompile.lref
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\View\MainWindow.baml
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore.g.resources
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore.I18n.MessagesResource.resources
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore.Properties.Resources.resources
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore.csproj.GenerateResource.Cache
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore.exe
+C:\Users\thiago\Documents\bdatum\BdatumRestore\obj\x86\Release\BdatumRestore.pdb

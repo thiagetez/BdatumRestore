@@ -8,6 +8,12 @@ namespace BdatumRestore.ViewModel
 {
     public partial class ListFolder
     {
+        /// <summary>
+        /// Checa o tamanho do path para gravar o arquivo pois não pode passar de 260 chars
+        /// </summary>
+        /// <param name="fileList"></param>
+        /// <param name="localPath"></param>
+        /// <returns></returns>
         public bool CheckPathSize(List<IFolder> fileList,string localPath)
         {
             int longPathsCount = 0;

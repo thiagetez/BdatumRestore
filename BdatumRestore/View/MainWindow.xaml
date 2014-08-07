@@ -12,7 +12,7 @@
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="Focusable" Value="False"/>
                     <!--<Setter Property="IsExpanded" Value="True"/>-->
-                    <Setter Property="IsExpanded" Value="{Binding Path=isExpanded, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" /> 
+                    <Setter Property="IsExpanded" Value="{Binding Path=isExpanded,UpdateSourceTrigger=PropertyChanged}" /> 
                 </Style>
             </TreeView.ItemContainerStyle>
                 <TreeView.ItemTemplate>
@@ -50,7 +50,7 @@
             </Button.Background>
         </Button>
         <Button AllowDrop="False" Command="{Binding UpdateCommand}" Content="" Height="23" HorizontalAlignment="Left" Margin="370,445,0,0" Name="button2" VerticalAlignment="Top" Width="75" Visibility="Hidden" />
-        <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="249,131,0,0" Name="textBlock1" Opacity="5" Text="Diretórios" VerticalAlignment="Top" />
+        <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="253,131,0,0" Name="textBlock1" Opacity="5" Text="Diretórios" VerticalAlignment="Top" />
         <TextBlock AllowDrop="False" FontSize="24" Height="35" HorizontalAlignment="Left" Margin="613,131,0,0" Name="textBlock2" Opacity="5" Text="Arquivos" VerticalAlignment="Top" />
         <Image Height="101" Margin="60,26,708,0" Name="image1" Stretch="Fill" VerticalAlignment="Top" Source="/BdatumRestore;component/Images/logo_bdatum.png" />
         <Label Content="Selecione uma pasta ou os arquivos." Height="53" Margin="281,26,139,0" Name="label1" VerticalAlignment="Top" FontSize="26">
@@ -131,6 +131,6 @@
                 </ListView.View>
             </ListView>
         </Expander>
-        
+        <Label Content="Carregando Diretórios..." Foreground="#FFFC0000" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="148,200,0,0" Name="LoadingLabel" VerticalAlignment="Top" Width="313" />
     </Grid>
 </Window>

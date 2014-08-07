@@ -11,6 +11,11 @@ namespace BdatumRestore.ViewModel
 
     public partial class ListFolder : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Retorna as versões de um arquivo
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         internal List<BDatumFilesVersion> GetVersions(string path)
         {
             Storage storage = new Storage(_configuration);

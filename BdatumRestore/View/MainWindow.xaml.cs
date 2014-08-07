@@ -33,21 +33,20 @@ namespace BdatumRestore.View
         public System.Windows.Forms.IWin32Window win32Handle { get; set; }
 
         public static Process SingleInstance()
-    // Returns a System.Diagnostics.Process pointing to
-    // a pre-existing process with the same name as the
-    // current one, if any; or null if the current process
-    // is unique.
-    {
-      Process curr = Process.GetCurrentProcess();
-      Process[] procs = Process.GetProcessesByName(curr.ProcessName);
-      foreach (Process p in procs)
-      {
-        if ((p.Id != curr.Id) &&
-            (p.MainModule.FileName == curr.MainModule.FileName))
-                return p;
-      }
-      return null;
-    }
+        {
+            Process curr = Process.GetCurrentProcess();
+            Process[] procs = Process.GetProcessesByName(curr.ProcessName);
+            foreach (Process p in procs)
+            {
+                if ((p.Id != curr.Id) &&
+                    (p.MainModule.FileName == curr.MainModule.FileName))
+                {
+                    Thread.Sleep(1000);
+                    return p;
+                }
+            }
+            return null;
+        }
 
 
 
@@ -110,10 +109,11 @@ namespace BdatumRestore.View
                     if (result == MessageBoxResult.Yes)
                     {
                         _Listfolder.PauseDownload();
-
+                        System.Windows.Forms.Application.Exit();
                     }
                 }
             }
+            System.Windows.Forms.Application.Exit();
         }
 
         private void FileList_SelectionChanged(object sender, SelectionChangedEventArgs e)

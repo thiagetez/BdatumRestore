@@ -242,13 +242,17 @@ namespace BdatumRestore.ViewModel
             m_folders = new ObservableCollection<IFolder>();
             m_files = new ObservableCollection<IFolder>();
             DetailList =new ObservableCollection<DownloadDetailsProperties>();
-            //TODO: listar pastas e arquivos em abas separadas
             AuthenticationMethod();
             CheckPausedRestore();
-            InitTreeView();
+            Thread thread = new Thread(new ThreadStart(() => InitTreeView()));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            
         }
 
-        //Refazer esse metodo para baixar por versao tbm
+        /// <summary>
+        /// Checa se existiu um restore pausado
+        /// </summary>
         private void CheckPausedRestore()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\bdatum\RestoreFileList.json";
@@ -298,11 +302,6 @@ namespace BdatumRestore.ViewModel
                 string json=reader.ReadToEnd();
                 AuthenticationProperties auth = JsonConvert.DeserializeObject<AuthenticationProperties>(json);
 
-                ////////TEST ONLY
-                //IAuthentication _authentication = new Authentication("NEKSP7b6hoktg4nIg5u4", "XGzzNadCLjXFpQjTuJYF");
-
-                //IAuthentication _authentication = new Authentication("6uAazfsYFez56nRYGyfZ", "XGzzNadCLjXFpQjTuJYF");
-
                 IAuthentication _authentication = new Authentication(auth.NodeKey, auth.PartnerKey);
 
                 if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["bdatumURI"]))
@@ -333,27 +332,27 @@ namespace BdatumRestore.ViewModel
         {
             try
             {
-                IFolder item = _MainWindow.TreeView1.SelectedItem as IFolder;
+                
                 List<BDatumFiles> FileList = new List<BDatumFiles>();
                 Storage storage = new Storage(_configuration);
                 FileList = storage.EnumerateFilesAndFolders();
-                m_folders.Clear();      
+                _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => m_folders.Clear())); 
           
                 foreach (BDatumFiles file in FileList)
                 {
                     if (file.IsDirectory)
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory,isExpanded=true });
+                        _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory, isExpanded = false }))); 
                     }
                     else
                     {
                         string[] dirname = file.FullName.Split('/');
-                        Files.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory, Size =file.Size.ToString(), Date = file.TimeSpan, Type = file.MimeType });
+                        _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>Files.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory, Size = file.Size.ToString(), Date = file.TimeSpan, Type = file.MimeType }))); 
                     }
 
                 }
-
+                _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.LoadingLabel.Visibility = Visibility.Hidden)); 
             }
             catch (Exception e)
             {
@@ -370,25 +369,20 @@ namespace BdatumRestore.ViewModel
         /// </summary>
         /// <param name="fileItem">Folder para navegar</param>
         internal void UpdateTreeView(object fileItem)
-        {
-                bool isListed = false;
+        {           
                 //Folder test = fileItem as Folder;
 
-            if(fileItem!=null)
+            if (fileItem != null)
                 SelectedFolder = fileItem as IFolder;
+            else
+                SelectedFolder.isExpanded = false;
 
-              #region TODO: Arrumar a expansão dos itens da TreeView
                 if (SelectedFolder.isExpanded == true)
-                    SelectedFolder.isExpanded = false;
-                else
-                    SelectedFolder.isExpanded = true;
-             #endregion  
-
+                    return;
                 
-                if (SelectedFolder.Folders.Count != 0)
-                {
-                    isListed = true;
-                }
+                _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = false));
+                _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = false));
+
                     List<BDatumFiles> FileList = new List<BDatumFiles>();
                     Storage storage = new Storage(_configuration);
                     FileList = storage.EnumerateFilesAndFolders(SelectedFolder.FullPath);
@@ -407,11 +401,12 @@ namespace BdatumRestore.ViewModel
                     {
                         if (file.IsDirectory)
                         {
-                            if (isListed == false)
+                            //if (isListed == false)
+                            if(SelectedFolder.isExpanded==false)
                             {
                                 string[] dirname = file.FullName.Split('/');
                                 //Folders[index].Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2]+@"\", FullPath = file.FullName, isFolder = file.IsDirectory,isChildren=true});
-                                SelectedFolder.Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true });
+                                _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>SelectedFolder.Folders.Add(new Folder { FolderName = dirname[dirname.Length - 2], FullPath = file.FullName, isFolder = file.IsDirectory, isChildren = true })));
                             }
                         }
                         else
@@ -419,18 +414,27 @@ namespace BdatumRestore.ViewModel
                             _ItensCount++;
                             string[] dirname = file.FullName.Split('/');
                             //Folders[index].Folders.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory,isChildren=true });
-                            Files.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory, Size = converter.Conversor(file.Size.ToString()), Date = file.TimeSpan, Type = file.MimeType });
+                            _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Files.Add(new Folder { FileName = dirname[dirname.Length - 1], FullPath = file.FullName, isFolder = file.IsDirectory, Size = converter.Conversor(file.Size.ToString()), Date = file.TimeSpan, Type = file.MimeType }))); 
                         }
 
                     }
+                    Application.Current.Dispatcher.Invoke(
+                                         DispatcherPriority.Background,
+                                          (Action)(() =>
+                                          {
+                                              if(Files.Count==0)
+                                              SelectedFolder.isExpanded = true;
+                                              _MainWindow.TreeView1.IsEnabled = true;
+                                              _MainWindow.FileList.IsEnabled = true;
+                                          }));
                     if (_ItensCount == 0)
                     {
-                        _MainWindow.FilesExistLabel.Content = I18n.MessagesResource.NoFileFound;
+                        _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FilesExistLabel.Content = I18n.MessagesResource.NoFileFound)); 
                     }
                     else
-                        _MainWindow.FilesExistLabel.Visibility = Visibility.Hidden;
-                    _MainWindow.BackButton.Visibility = Visibility.Hidden;
-            
+                      _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FilesExistLabel.Visibility = Visibility.Hidden));
+                      _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>_MainWindow.BackButton.Visibility = Visibility.Hidden));
+                
             
          }
 
@@ -449,7 +453,12 @@ namespace BdatumRestore.ViewModel
                 _MainWindow.FileType.Content = "Tipo: " + desc.Type;
                 _MainWindow.FileSize.Content = "Tamanho: "+converter.Conversor(desc.Size);
                 _MainWindow.FileDate.Content = "Data: " + desc.Date.ToString();
+
+                if (desc.isVersion == false)
                 _MainWindow.VersionButton.Visibility = Visibility.Visible;
+                else
+                    _MainWindow.BackButton.Visibility = Visibility.Visible;
+
                 _SelectedFile =desc;
             }
             else
@@ -466,17 +475,29 @@ namespace BdatumRestore.ViewModel
         /// </summary>
         public void GetFileVersion()
         {
+            _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.TreeView1.IsEnabled = false));
+            _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => _MainWindow.FileList.IsEnabled = false));
            List<BDatumFilesVersion> versions= GetVersions(_SelectedFile.FullPath);
-           Files.Clear();
+           _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Files.Clear())); 
             _ItensCount=1;
            foreach (BDatumFilesVersion file in versions)
            {       
                    //folders[index].folders.add(new folder { filename = dirname[dirname.length - 1], fullpath = file.fullname, isfolder = file.isdirectory,ischildren=true });
-                   Files.Add(new Folder { FileName =_ItensCount.ToString() , FullPath = _SelectedFile.FullPath, isFolder = false, Size = file.Size.ToString(), Date = file.TimeStamp, Type = _SelectedFile.Type,Version=(int)file.Version,isVersion=true });
+               _MainWindow.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => Files.Add(new Folder { FileName = _ItensCount.ToString(), FullPath = _SelectedFile.FullPath, isFolder = false, Size = file.Size.ToString(), Date = file.TimeStamp, Type = _SelectedFile.Type, Version = (int)file.Version, isVersion = true }))); 
                    _ItensCount++;
            }
-           _MainWindow.VersionButton.Visibility = Visibility.Hidden;
-           _MainWindow.BackButton.Visibility = Visibility.Visible;
+           Application.Current.Dispatcher.Invoke(
+                                      DispatcherPriority.Background,
+                                       (Action)(() =>
+                                       {
+                                           if (Files.Count == 0)
+                                               SelectedFolder.isExpanded = true;
+
+                                           _MainWindow.TreeView1.IsEnabled = true;
+                                           _MainWindow.FileList.IsEnabled = true;
+                                           _MainWindow.VersionButton.Visibility = Visibility.Hidden;
+                                           _MainWindow.BackButton.Visibility = Visibility.Hidden;
+                                       }));
         }
 
         /// <summary>
@@ -486,10 +507,15 @@ namespace BdatumRestore.ViewModel
         {
             if (_ItensCount != 0)
             {
-                Files.Clear();
-                _ItensCount = 0;
-                _MainWindow.FilesExistLabel.Content = I18n.MessagesResource.NoFileFound;
-                _MainWindow.FilesExistLabel.Visibility = Visibility.Visible;
+                Application.Current.Dispatcher.Invoke(
+                    DispatcherPriority.Background,
+                     (Action)(() =>
+                     {
+                         Files.Clear();
+                         _ItensCount = 0;
+                         _MainWindow.FilesExistLabel.Content = I18n.MessagesResource.NoFileFound;
+                         _MainWindow.FilesExistLabel.Visibility = Visibility.Visible;
+                     }));
             }
         }
 
